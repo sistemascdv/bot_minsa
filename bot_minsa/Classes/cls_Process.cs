@@ -185,9 +185,11 @@ namespace bot_minsa.Classes
                             string state = "";
 
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application,
-                                "Código estudio : [" + oRow["e_descripcion"].ToString() +
-                                "], orden: [" + oRow["numero_interno"].ToString() +
-                                "], Nombre: [" + oRow["cedula"].ToString() +
+                                "Cód. estudio: [" + oRow["e_descripcion"].ToString() +
+                                "], Orden: [" + oRow["numero_interno"].ToString() +
+                                "]");
+                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application,
+                                "Cédula: [" + oRow["cedula"].ToString() +
                                 "], Nombre: [" + oRow["primer_nombre"].ToString() +
                                  "], Apellido: [" + oRow["primer_apellido"].ToString() +
                                 "]");
@@ -316,12 +318,8 @@ namespace bot_minsa.Classes
                             }
                             #endregion
 
-
                             try
                             {
-
-
-
                                 #region activar_formulario
 
                                 bool paciente_existe = false;
@@ -363,6 +361,7 @@ namespace bot_minsa.Classes
                                         catch (Exception)
                                         {
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón 'Nuevo' no se pudo cliquear. ");
+                                            next_foreach = true;
                                         }
                                     }
                                     else { next_foreach = true; }
@@ -381,23 +380,98 @@ namespace bot_minsa.Classes
                                 //Tipo documento *	demo_-10_value	tipo_documento
                                 driver.FindElement(By.Id("demo_-10_value")).Click();
                                 driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento + Keys.Enter);
-                                System.Threading.Thread.Sleep(1500);
+                                System.Threading.Thread.Sleep(1600);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en cedula.");
                                 //Cédula *	demo_-100	cedula
                                 driver.FindElement(By.Id("demo_-100")).Click();
                                 driver.FindElement(By.Id("demo_-100")).SendKeys(cedula + Keys.Enter);
-                                System.Threading.Thread.Sleep(1500);
+                                System.Threading.Thread.Sleep(1000);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si existe el paciente.");
                                 //validar si existe el paciente
-                                var element = WaitForElement(1, By.Id("demo_-103"), driver);
-                                value = element.GetAttribute("value").Trim();
+                                //var element = WaitForElement(1, By.Id("demo_-103"), driver);
+                                //value = element.GetAttribute("value").Trim();
+
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar si campo 'Primer Apellido' esta disponible. ");
+                                ////Primer apellido *  demo_-101   primer_apellido
+
+                                //bool next_foreach = false;
+                                value = "";
+                                next_foreach = false;
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+
+                                    IWebElement primer_apellido_verificacion = null;
+                                    bool existe_elemento = TryFindElement(By.Id("demo_-101"), out primer_apellido_verificacion); //driver.FindElement(By.Id("demo_-101"));
+                                    System.Threading.Thread.Sleep(i * 2000);
+                                    if (existe_elemento)
+                                    {
+
+                                        if ((primer_apellido_verificacion.Displayed && !primer_apellido_verificacion.Enabled)) // existe pero esta deshabilitado //paciente existe
+                                        {
+                                            try
+                                            {
+                                                //paciente existe
+                                                value = primer_apellido_verificacion.GetAttribute("value").Trim();
+                                                if (!String.IsNullOrEmpty(value))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'Primer Apellido', leído con éxito.");
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente existe.");
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    //valor incoherente: valor vacio con campo inactivo. Puede que la página no ha terminado de cargar
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'Primer Apellido': inactivo pero con valor vacío.");
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Pasar al siguiente intento");
+                                                }
+                                            }
+                                            catch (Exception)
+                                            {
+                                                next_foreach = true;
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Campo 'Primer apellido' no se pudo leer. ");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "No se puede continuar con el registro actual.");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if ((primer_apellido_verificacion.Displayed && primer_apellido_verificacion.Enabled))//paciente NO existe
+                                            {
+                                                value = "";
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente no existe.");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'Primer Apellido', leído con éxito.");
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                next_foreach = true;
+                                            }
+                                        }
+                                    }
+                                    else { next_foreach = true; }
+
+                                }//if (existe_elemento)
+
+
+                                ////validar si campo 'primer apellido' esta deshabilitado y en blanco.al parecer nunca ocurre
+                                //if (!primer_apellido_verificacion.Enabled and String.IsNullOrEmpty(value)) )
+                                //{
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Campo 'Primer apellido' esta deshabilitado pero vacío.");
+                                //    continue;
+                                //}
+                                if (next_foreach)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Despues de 4 intentos no se pudo leer el campo 'Primer apellido'.");
+                                    continue;
+                                }
+
                                 //value = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim();
 
                                 if (!String.IsNullOrEmpty(value))
                                 {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente existe.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente existente.");
                                     string comentario_de_la_orden = "";
                                     paciente_existe = true;
 
@@ -648,13 +722,15 @@ namespace bot_minsa.Classes
                                 var button_guardar = driver.FindElement(By.XPath("//*[@ng-click='vm.eventSave()']"));
                                 try
                                 {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en guardar. ");
                                     button_guardar.Click();
                                     //validar que registro se guardado
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
+                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
                                     bool error_al_guardar = false;
                                     for (int i = 1; i <= 4; i++)
                                     {
-                                        System.Threading.Thread.Sleep(4000 + i * 1000);
+                                        System.Threading.Thread.Sleep(3000 + i * 2000);
                                         //evaluar si boton nuevo esta disabled
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Intento: " + i.ToString());
                                         IWebElement button_nuevo_verificacion = null;// driver.FindElement(By.XPath("//*[@ng-click='vm.eventNew()']"));
@@ -663,14 +739,16 @@ namespace bot_minsa.Classes
                                             if ((!button_nuevo_verificacion.Enabled) && button_guardar.Enabled)
                                             {
                                                 error_al_guardar = true;
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta desactivado.");
+                                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta desactivado (no se ha terminado de guardar).");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "No se ha terminado de guardar.");
                                                 //no se ha terminado de guardar.
                                                 //esperar
                                             }
                                             else
                                             {
                                                 error_al_guardar = false;
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta activado");
+                                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta activo.");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Registro guardado, formulario listo para otro registro.");
                                                 break;
                                             }
                                         }
@@ -679,24 +757,32 @@ namespace bot_minsa.Classes
                                     if (error_al_guardar)
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "No he habilitó el botón nuevo, se colocará este registro para revisión manual");
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Puede tratarse de registro duplicado.");
-                                        //update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Puede tratarse de registro duplicado o la página tardó mucho en responder.");
+                                        update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
 
                                         //intertar click en boton deshacer
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Buscar botón 'deshacer' y dar click.");
-                                        var boton_deshacer = driver.FindElement(By.XPath("//*[@ng-click='vm.eventUndo()']"));
-                                        if ((boton_deshacer.Displayed && boton_deshacer.Enabled))
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Buscar si está activo el botón 'deshacer'");
+                                        IWebElement button_deshacer_verificacion = null;
+                                        if (TryFindElement(By.XPath("//*[@ng-click='vm.eventUndo()']"), out button_deshacer_verificacion))
                                         {
-                                            try
+                                            if (button_deshacer_verificacion.Displayed && button_deshacer_verificacion.Enabled)
                                             {
-                                                boton_deshacer.Click();
-                                                System.Threading.Thread.Sleep(5000);
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en 'Deshacer'.");
-                                                update_labcore_order(l_id, "3");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshacer activo. ");
+                                                try
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en 'Deshacer'.");
+                                                    button_deshacer_verificacion.Click();
+                                                    System.Threading.Thread.Sleep(5000);
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshcaer no se pudo cliquear. ");
+                                                    recargar_pagina = true;
+                                                }
                                             }
-                                            catch (Exception)
+                                            else
                                             {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón 'Deshacer' no se pudo cliquear. ");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshacer no esta habilitado. ");
                                                 recargar_pagina = true;
                                             }
                                         }
@@ -711,7 +797,7 @@ namespace bot_minsa.Classes
                                 }
                                 catch (Exception ex)
                                 {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error en click guardar = '" + oRow["l_id"].ToString() + "'");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error en click guardar = '" + l_id + "'");
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
                                     error_on_process = true;
 
@@ -731,9 +817,11 @@ namespace bot_minsa.Classes
                             catch (Exception ex)
                             {
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error durante la inserción de datos en la página.");
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro");
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
 
-                                break; //end for
+                                continue; //pasar al suguiente registro
+                                //break; //end for
                             }//end try 
 
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Fin de la orden actual. ");
