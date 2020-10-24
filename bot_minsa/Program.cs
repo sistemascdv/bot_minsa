@@ -12,7 +12,16 @@ namespace bot_minsa
         static void Main(string[] args)
         {
             cls_Process oProcess = new cls_Process();
+
+            //while (true)
+            //{
             oProcess.start_Process();
+            
+            //    Console.Clear();
+            //    System.Threading.Thread.Sleep(1000);
+
+            //}
+
 
         }
     }

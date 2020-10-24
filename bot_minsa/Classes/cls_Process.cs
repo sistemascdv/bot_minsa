@@ -18,6 +18,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Remote;
 
 namespace bot_minsa.Classes
 {
@@ -51,10 +52,10 @@ namespace bot_minsa.Classes
         {
             try
             {
-                //string dir = System.Environment.CurrentDirectory;
-                string dir = @"C:\\bot_minsa";
-                //string log = "Log.txt";
-                string log = @"C:\\bot_minsa\\Log.txt";
+                string dir = System.Environment.CurrentDirectory;
+                //string dir = @"C:\\bot_minsa";
+                string log = "Log.txt";
+                //string log = @"C:\\bot_minsa\\Log.txt";
 
                 if (File.Exists(Path.Combine(dir, log)))
                 {
@@ -71,6 +72,7 @@ namespace bot_minsa.Classes
 
         public void start_Process()
         {
+
             #region MINSA
 
             //*************
@@ -87,7 +89,7 @@ namespace bot_minsa.Classes
             bool error_on_validation = false;
             bool recargar_pagina = false;
             int counter = 0;
-
+            bool pagina_cargada = false;
             try
             {
                 //inicializando el nombre del archivo de log generado por el sistema.
@@ -98,8 +100,7 @@ namespace bot_minsa.Classes
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "*********************************************");
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Inciando proceso de reporte de pruebas al MINSA");
                 DataTable oTableSP = new DataTable();
-
-
+                
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Obtener datos de las pruebas a reportar (sp en labcore).");
                 try
                 {
@@ -127,20 +128,33 @@ namespace bot_minsa.Classes
                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Conectando a MINSA. ");
 
 
-                        //IWebDriver driver = new FirefoxDriver();
-                        //driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(60);
-                        driver.Navigate().GoToUrl("http://190.34.154.91:7050/");
-                        System.Threading.Thread.Sleep(5000);
+                        pagina_cargada = false;
+                        for (int i = 1; i <= 5; i++)
+                        {
+                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                            driver.Navigate().GoToUrl("http://190.34.154.91:7050/");
+                            System.Threading.Thread.Sleep(10000 + i+i * 1000);
+                            if (driver.FindElements(By.Id("username")).Count() > 0)
+                            {
+                                pagina_cargada = true;
+                                break;
+                            }
+                        }
+                        if (!pagina_cargada)
+                        {
+                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de 5 intentos no se pudo cargar la página : http://190.34.154.91:7050/");
+                            return;
+                        }
+
                         string minsa_user = ConfigurationManager.AppSettings["minsa_user"].ToString();
                         string minsa_pass = ConfigurationManager.AppSettings["minsa_pass"].ToString();
                         driver.FindElement(By.Id("username")).SendKeys(minsa_user);
-                        //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
                         System.Threading.Thread.Sleep(1000);
                         driver.FindElement(By.Id("password")).SendKeys(minsa_pass + Keys.Enter);
-                        //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
                         System.Threading.Thread.Sleep(1000);
                         driver.FindElement(By.Id("password")).SendKeys(Keys.Enter);
                         System.Threading.Thread.Sleep(5000);
+
 
                         //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
@@ -159,7 +173,7 @@ namespace bot_minsa.Classes
                             {
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Accediendo al formulario");
                                 recargar_pagina = false;
-                                bool pagina_cargada = false;
+                                  pagina_cargada = false;
                                 for (int i = 1; i <= 4; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
@@ -185,7 +199,8 @@ namespace bot_minsa.Classes
                             string state = "";
 
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application,
-                                "Cód. estudio: [" + oRow["e_descripcion"].ToString() +
+                                "l_id: [" + oRow["l_id"].ToString() +
+                                "], Cód. estudio: [" + oRow["e_descripcion"].ToString() +
                                 "], Orden: [" + oRow["numero_interno"].ToString() +
                                 "]");
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application,
@@ -263,6 +278,11 @@ namespace bot_minsa.Classes
                                 else
                                 {
                                     genero = genero_minsa.Replace(".", ". ");
+                                    if (genero.Trim() == ".")
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
+                                        error_on_validation = true;
+                                    }
                                 }
                             }
 
@@ -360,7 +380,7 @@ namespace bot_minsa.Classes
                                         }
                                         catch (Exception)
                                         {
-                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón 'Nuevo' no se pudo cliquear. ");
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Botón 'Nuevo' no se pudo cliquear. ");
                                             next_foreach = true;
                                         }
                                     }
@@ -368,7 +388,8 @@ namespace bot_minsa.Classes
                                 }
                                 if (next_foreach)
                                 {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Despues de 4 intentos no se pudo cliquear botón 'Nuevo'.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Despues de 4 intentos no se pudo cliquear botón 'Nuevo'.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa al siguiente registro.");
                                     continue;
                                 }
                                 #endregion
@@ -463,7 +484,8 @@ namespace bot_minsa.Classes
                                 //}
                                 if (next_foreach)
                                 {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Despues de 4 intentos no se pudo leer el campo 'Primer apellido'.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Despues de 4 intentos no se pudo leer el campo 'Primer apellido'.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "****Se pasa al siguiente registro.");
                                     continue;
                                 }
 
@@ -533,12 +555,13 @@ namespace bot_minsa.Classes
                                             }
                                             catch (Exception)
                                             {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error al añadir el comentario.");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "****Error al añadir el comentario.");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "***No se pudo añadir el comentario.");
                                             }
                                         }
                                         else
                                         {
-                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Comentario textbox no hallado.");
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Comentario textbox no hallado.");
                                         }
                                     }
                                 }
@@ -564,11 +587,11 @@ namespace bot_minsa.Classes
                                     //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.3);
                                     //System.Threading.Thread.Sleep(1000);
 
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en segundo_apellido.");
-                                    //Segundo apellido	demo_-102	segundo_apellido
-                                    driver.FindElement(By.Id("demo_-102")).Click();
-                                    driver.FindElement(By.Id("demo_-102")).SendKeys(segundo_apellido + Keys.Enter);
-                                    System.Threading.Thread.Sleep(600);
+                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en segundo_apellido.");
+                                    ////Segundo apellido	demo_-102	segundo_apellido
+                                    //driver.FindElement(By.Id("demo_-102")).Click();
+                                    //driver.FindElement(By.Id("demo_-102")).SendKeys(segundo_apellido + Keys.Enter);
+                                    //System.Threading.Thread.Sleep(600);
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en primer_nombre.");
                                     //Primer nombre *	demo_-103	primer_nombre
@@ -756,7 +779,7 @@ namespace bot_minsa.Classes
 
                                     if (error_al_guardar)
                                     {
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "No he habilitó el botón nuevo, se colocará este registro para revisión manual");
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "No he habilitó el botón nuevo, se colocará este registro para REVISIÓN MANUAL");
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Puede tratarse de registro duplicado o la página tardó mucho en responder.");
                                         update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
 
@@ -851,6 +874,12 @@ namespace bot_minsa.Classes
             {
                 Send_Email(error_global, "Alerta: Error en proceso");
             }
+            if (error_global )
+            {
+                Send_Email_Log();
+            }
+
+            driver.Close();
 
             #endregion
 
@@ -958,8 +987,8 @@ namespace bot_minsa.Classes
 
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Buscando el valor para la llave [email_log_emplate].");
                 string dir = System.Environment.CurrentDirectory;
-                //string file = "email_log_emplate.txt";
-                string file = @"C:\\bot_minsa\\email_log_emplate.txt";
+                string file = "email_log_emplate.txt";
+                //string file = @"C:\\bot_minsa\\email_log_emplate.txt";
                 vValue = Path.Combine(dir, file);
 
                 if (vValue != null)
@@ -975,8 +1004,8 @@ namespace bot_minsa.Classes
                     vEmail_Report_Template = vValue.ToString();
                 }
 
-                //vFile_Attach_Path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Log.txt";
-                vFile_Attach_Path = @"C:\\bot_minsa\\Log.txt";
+                vFile_Attach_Path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Log.txt";
+                //vFile_Attach_Path = @"C:\\bot_minsa\\Log.txt";
                 vEmail_Body_Template_Path = vEmail_Templates_Path + vEmail_Report_Template;
 
                 oCC_Address = null;
@@ -989,11 +1018,6 @@ namespace bot_minsa.Classes
             {
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
             }
-
-
-            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "********* PRESIONE CUALQUIER TECLA PARA SALIR **************************");
-            Console.ReadKey();
-
         }
 
 
@@ -1054,11 +1078,13 @@ namespace bot_minsa.Classes
                 string file = "";
                 if (error)
                 {
-                    file = @"C:\\bot_minsa\\email_error_template.txt";
+                    file = @"email_error_template.txt";
+                    //file = @"C:\\bot_minsa\\email_error_template.txt";
                 }
                 else
                 {
-                    file = @"C:\\bot_minsa\\email_log_emplate.txt";
+                    file = @"email_log_emplate.txt";
+                    //file = @"C:\\bot_minsa\\email_log_emplate.txt";
                 }
                 vValue = Path.Combine(dir, file);
 

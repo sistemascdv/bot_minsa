@@ -1,5 +1,5 @@
 
-Alerta de errores en el proceso de actualizacion de productos de SAP A BPM.
+Alerta de errores en el proceso de reporte al MINSA.
 
 Remitase al log del proceso para mayores detalles.
 

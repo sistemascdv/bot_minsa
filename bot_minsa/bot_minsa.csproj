@@ -67,6 +67,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="email_error_template.txt" />
+    <Content Include="email_log_emplate.txt" />
+    <Content Include="email_log_template.txt" />
     <Content Include="Gph_FrameWork.dll" />
     <Content Include="query_sap_bpm.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
