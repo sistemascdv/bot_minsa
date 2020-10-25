@@ -107,7 +107,7 @@ namespace bot_minsa.Classes
                     SqlConnection cnnSP = new SqlConnection(cnnLABCORE);
                     SqlDataAdapter daSP = new SqlDataAdapter("p_reporte_minsa", cnnSP);
                     daSP.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    daSP.SelectCommand.CommandTimeout = 3600;
+                    daSP.SelectCommand.CommandTimeout = 60;
                     daSP.Fill(oTableSP);
                 }
                 catch (Exception ex)
@@ -872,8 +872,9 @@ namespace bot_minsa.Classes
                     }
                     else
                     {
-                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "No hubo registros insertados.");
+                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "No hay registros nuevos por insertar");
                     } // end if (oTableSP.Rows.Count > 0)
+
                 } //end if (oTableSP != null)
 
                 //en caso de error enviar correo de advertencia
@@ -888,6 +889,8 @@ namespace bot_minsa.Classes
                 error_global = true;
             }
 
+            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "EL PROCESO HA FINALIZADO.");
+            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, ".........................");
             if (error_global || error_on_validation || error_on_process)
             {
                 Send_Email(error_global, "Alerta: Error en proceso");
