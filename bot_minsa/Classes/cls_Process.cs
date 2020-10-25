@@ -212,7 +212,7 @@ namespace bot_minsa.Classes
 
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validación de datos. ");
                             string l_id = oRow["l_id"].ToString();
-                            string tipo_documento = oRow["tipo_documento"].ToString();
+                            string tipo_documento = oRow["tipo_documento_completo"].ToString();
                             string cedula = oRow["cedula"].ToString();
                             string primer_apellido = oRow["primer_apellido"].ToString();
                             string segundo_apellido = oRow["segundo_apellido"].ToString();
@@ -398,13 +398,50 @@ namespace bot_minsa.Classes
 
                                 #region Validacion_Paciente
 
-                                System.Threading.Thread.Sleep(500);
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_documento.");
-                                //Tipo documento *	demo_-10_value	tipo_documento
-                                driver.FindElement(By.Id("demo_-10_value")).Click();
-                                driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento + Keys.Enter);
-                                System.Threading.Thread.Sleep(700);
+                                //System.Threading.Thread.Sleep(1000);
+                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_documento.");
+                                ////Tipo documento *	demo_-10_value	tipo_documento
+                                //driver.FindElement(By.Id("demo_-10_value")).Click();
+                                //driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento + Keys.Enter);
+                                
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Buscando campo 'tipo de documento'. ");
+                                var campo_tipo_documento = driver.FindElement(By.Id("demo_-10_value"));
+                                  next_foreach = false;
 
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                    System.Threading.Thread.Sleep(i * 2000);
+                                    if ((campo_tipo_documento.Displayed && campo_tipo_documento.Enabled))
+                                    {
+                                        try
+                                        {
+                                            campo_tipo_documento.Clear();
+                                            campo_tipo_documento.Click();
+                                            System.Threading.Thread.Sleep(1000);
+                                            campo_tipo_documento.SendKeys(tipo_documento + Keys.Enter);
+                                            driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento);
+                                            next_foreach = false;
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en 'tipo de documento'.");
+                                            break;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'tipo de documento' no se pudo cliquear. ");
+                                            next_foreach = true;
+                                        }
+                                    }
+                                    else { next_foreach = true; }
+                                }
+                                if (next_foreach)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Despues de 4 intentos no se pudo cliquear botón 'tipo de documento'.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa al siguiente registro.");
+                                    recargar_pagina = true;
+                                    continue;
+                                }
+
+                                System.Threading.Thread.Sleep(900);
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en cedula.");
                                 //Cédula *	demo_-100	cedula
                                 driver.FindElement(By.Id("demo_-100")).Click();
