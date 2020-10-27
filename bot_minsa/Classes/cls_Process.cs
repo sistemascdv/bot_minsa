@@ -100,7 +100,7 @@ namespace bot_minsa.Classes
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "*********************************************");
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Inciando proceso de reporte de pruebas al MINSA");
                 DataTable oTableSP = new DataTable();
-                
+
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Obtener datos de las pruebas a reportar (sp en labcore).");
                 try
                 {
@@ -132,8 +132,17 @@ namespace bot_minsa.Classes
                         for (int i = 1; i <= 5; i++)
                         {
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                            driver.Navigate().GoToUrl("http://190.34.154.91:7050/");
-                            System.Threading.Thread.Sleep(10000 + i+i * 1000);
+                            try
+                            {
+                                driver.Navigate().GoToUrl("http://190.34.154.91:7050/");
+                            }
+                            catch (Exception)
+                            {
+
+                                //throw;
+                            }
+
+                            System.Threading.Thread.Sleep(10000 + i + i * 1000);
                             if (driver.FindElements(By.Id("username")).Count() > 0)
                             {
                                 pagina_cargada = true;
@@ -173,7 +182,7 @@ namespace bot_minsa.Classes
                             {
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Accediendo al formulario");
                                 recargar_pagina = false;
-                                  pagina_cargada = false;
+                                pagina_cargada = false;
                                 for (int i = 1; i <= 4; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
@@ -270,22 +279,24 @@ namespace bot_minsa.Classes
                             }
                             if (String.IsNullOrEmpty(genero))
                             {
-                                //buscar si 
-                                string genero_minsa = driver.FindElement(By.Id("demo_-104_value")).GetAttribute("value").Trim();
-                                if (String.IsNullOrEmpty(genero_minsa))
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
-                                    error_on_validation = true;
-                                }
-                                else
-                                {
-                                    genero = genero_minsa.Replace(".", ". ");
-                                    if (genero.Trim() == ".")
-                                    {
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
-                                        error_on_validation = true;
-                                    }
-                                }
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
+                                error_on_validation = true;
+                                ////buscar si 
+                                //string genero_minsa = driver.FindElement(By.Id("demo_-104_value")).GetAttribute("value").Trim();
+                                //if (String.IsNullOrEmpty(genero_minsa))
+                                //{
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
+                                //    error_on_validation = true;
+                                //}
+                                //else
+                                //{
+                                //    genero = genero_minsa.Replace(".", ". ");
+                                //    if (genero.Trim() == ".")
+                                //    {
+                                //        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
+                                //        error_on_validation = true;
+                                //    }
+                                //}
                             }
 
                             if (String.IsNullOrEmpty(fecha_nacimiento))
@@ -404,10 +415,10 @@ namespace bot_minsa.Classes
                                 ////Tipo documento *	demo_-10_value	tipo_documento
                                 //driver.FindElement(By.Id("demo_-10_value")).Click();
                                 //driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento + Keys.Enter);
-                                
+
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Buscando campo 'tipo de documento'. ");
                                 var campo_tipo_documento = driver.FindElement(By.Id("demo_-10_value"));
-                                  next_foreach = false;
+                                next_foreach = false;
 
                                 for (int i = 1; i <= 4; i++)
                                 {
@@ -429,7 +440,7 @@ namespace bot_minsa.Classes
                                             next_foreach = false;
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en 'tipo de documento'.");
                                             value = campo_tipo_documento.GetAttribute("value").Trim();
-                                            if (  value.ToUpper() == "CC. CEDULA" || value.ToUpper() == "PA. PASAPORTE" )
+                                            if (value.ToUpper() == "CC. CEDULA" || value.ToUpper() == "PA. PASAPORTE" || value.ToUpper() == "CE. CEDULA EXTRANJERIA")
                                             {
                                                 break;
 
@@ -456,7 +467,7 @@ namespace bot_minsa.Classes
                                 //Cédula *	demo_-100	cedula
                                 driver.FindElement(By.Id("demo_-100")).Click();
                                 driver.FindElement(By.Id("demo_-100")).SendKeys(cedula + Keys.Enter);
-                                System.Threading.Thread.Sleep(1000);
+                                System.Threading.Thread.Sleep(1200);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si existe el paciente.");
                                 //validar si existe el paciente
@@ -625,6 +636,7 @@ namespace bot_minsa.Classes
                                     var element_primer_apellido = driver.FindElement(By.Id("demo_-101"));
                                     //System.Threading.Thread.Sleep(500);
                                     element_primer_apellido.Click();
+                                    element_primer_apellido.Clear();
                                     element_primer_apellido.SendKeys(primer_apellido + Keys.Enter);
                                     System.Threading.Thread.Sleep(300);
 
@@ -634,28 +646,33 @@ namespace bot_minsa.Classes
                                     //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.3);
                                     //System.Threading.Thread.Sleep(1000);
 
-                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en segundo_apellido.");
-                                    ////Segundo apellido	demo_-102	segundo_apellido
-                                    //driver.FindElement(By.Id("demo_-102")).Click();
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en segundo_apellido.");
+                                    //Segundo apellido	demo_-102	segundo_apellido
+                                    driver.FindElement(By.Id("demo_-102")).Click();
+                                    driver.FindElement(By.Id("demo_-102")).Clear();
                                     //driver.FindElement(By.Id("demo_-102")).SendKeys(segundo_apellido + Keys.Enter);
-                                    //System.Threading.Thread.Sleep(600);
+                                    System.Threading.Thread.Sleep(300);
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en primer_nombre.");
                                     //Primer nombre *	demo_-103	primer_nombre
                                     driver.FindElement(By.Id("demo_-103")).Click();
+                                    driver.FindElement(By.Id("demo_-103")).Clear();
                                     driver.FindElement(By.Id("demo_-103")).SendKeys(primer_nombre + Keys.Enter);
                                     System.Threading.Thread.Sleep(300);
 
-                                    ////Segundo nombre	demo_-103	segundo_nombre
+                                    //Segundo nombre	demo_-103	segundo_nombre
                                     //driver.FindElement(By.Id("demo_-103")).SendKeys(segundo_nombre + Keys.Enter); //no lo usamos
-                                    //System.Threading.Thread.Sleep(1000);
+                                    driver.FindElement(By.Id("demo_-109")).Clear();
+                                    //driver.FindElement(By.Id("demo_-109")).Clear();
+                                    System.Threading.Thread.Sleep(1000);
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en genero.");
                                     //Género *	demo_-104_value	genero
                                     driver.FindElement(By.Id("demo_-104_value")).Click();
-                                    driver.FindElement(By.Id("demo_-104_value")).SendKeys(genero );
+                                    driver.FindElement(By.Id("demo_-104_value")).Clear();
+                                    driver.FindElement(By.Id("demo_-104_value")).SendKeys(genero);
                                     System.Threading.Thread.Sleep(500);
-                                    driver.FindElement(By.Id("demo_-104_value")).SendKeys( Keys.Enter);
+                                    driver.FindElement(By.Id("demo_-104_value")).SendKeys(Keys.Enter);
                                     System.Threading.Thread.Sleep(300);
                                 }//if (!paciente_existe)
 
@@ -679,9 +696,9 @@ namespace bot_minsa.Classes
                                 //REGIÓN *	demo_1_value	region
                                 driver.FindElement(By.Id("demo_1_value")).Clear();
                                 driver.FindElement(By.Id("demo_1_value")).Click();
-                                driver.FindElement(By.Id("demo_1_value")).SendKeys(region );
+                                driver.FindElement(By.Id("demo_1_value")).SendKeys(region);
                                 System.Threading.Thread.Sleep(500);
-                                driver.FindElement(By.Id("demo_1_value")).SendKeys( Keys.Enter);
+                                driver.FindElement(By.Id("demo_1_value")).SendKeys(Keys.Enter);
                                 System.Threading.Thread.Sleep(500);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en distrito.");
@@ -690,14 +707,14 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_2_value")).Click();
                                 driver.FindElement(By.Id("demo_2_value")).SendKeys(distrito);
                                 System.Threading.Thread.Sleep(500);
-                                driver.FindElement(By.Id("demo_2_value")).SendKeys( Keys.Enter);
+                                driver.FindElement(By.Id("demo_2_value")).SendKeys(Keys.Enter);
                                 System.Threading.Thread.Sleep(500);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en corregimiento.");
                                 //CORREGIMIENTO *	demo_3_value	corregimiento
                                 driver.FindElement(By.Id("demo_3_value")).Clear();
                                 driver.FindElement(By.Id("demo_3_value")).Click();
-                                driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento );
+                                driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
                                 System.Threading.Thread.Sleep(500);
                                 driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
                                 System.Threading.Thread.Sleep(500);
@@ -760,7 +777,7 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_12_value")).Click();
                                 driver.FindElement(By.Id("demo_12_value")).SendKeys(tipo_de_prueba);
                                 System.Threading.Thread.Sleep(300);
-                                driver.FindElement(By.Id("demo_12_value")).SendKeys( Keys.Enter);
+                                driver.FindElement(By.Id("demo_12_value")).SendKeys(Keys.Enter);
                                 System.Threading.Thread.Sleep(600);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en resultado_minsa.");
@@ -768,7 +785,7 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_11_value")).Click();
                                 driver.FindElement(By.Id("demo_11_value")).SendKeys(resultado_minsa);
                                 System.Threading.Thread.Sleep(300);
-                                driver.FindElement(By.Id("demo_11_value")).SendKeys( Keys.Enter);
+                                driver.FindElement(By.Id("demo_11_value")).SendKeys(Keys.Enter);
                                 System.Threading.Thread.Sleep(500);
 
                                 //RESULTADO IGG *	demo_16_value	resultado_igg
@@ -806,7 +823,7 @@ namespace bot_minsa.Classes
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_muestra.");
                                     //TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
                                     driver.FindElement(By.Id("demo_15_value")).Click();
-                                    driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo );
+                                    driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
                                     System.Threading.Thread.Sleep(300);
                                     driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
                                     //System.Threading.Thread.Sleep(500);
@@ -958,7 +975,7 @@ namespace bot_minsa.Classes
             {
                 Send_Email(error_global, "Alerta: Error en proceso");
             }
-            if (error_global )
+            if (error_global)
             {
                 Send_Email_Log();
             }
