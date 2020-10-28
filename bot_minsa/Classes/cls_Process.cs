@@ -42,7 +42,7 @@ namespace bot_minsa.Classes
         string sql_message;
 
         string cnnLABCORE = ConfigurationManager.ConnectionStrings["labcore"].ConnectionString;
-
+        //FirefoxDriver driver = new FirefoxDriver();
 
         IWebDriver driver = new FirefoxDriver();
         public cls_Process()
@@ -134,7 +134,9 @@ namespace bot_minsa.Classes
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                             try
                             {
+                                if (i == 1) { 
                                 driver.Navigate().GoToUrl("http://190.34.154.91:7050/");
+                                }
                             }
                             catch (Exception)
                             {
@@ -142,7 +144,7 @@ namespace bot_minsa.Classes
                                 //throw;
                             }
 
-                            System.Threading.Thread.Sleep(10000 + i + i * 1000);
+                            System.Threading.Thread.Sleep(12000 + i + i * 1000);
                             if (driver.FindElements(By.Id("username")).Count() > 0)
                             {
                                 pagina_cargada = true;
@@ -155,14 +157,16 @@ namespace bot_minsa.Classes
                             return;
                         }
 
+                        System.Threading.Thread.Sleep(1000);
                         string minsa_user = ConfigurationManager.AppSettings["minsa_user"].ToString();
                         string minsa_pass = ConfigurationManager.AppSettings["minsa_pass"].ToString();
                         driver.FindElement(By.Id("username")).SendKeys(minsa_user);
                         System.Threading.Thread.Sleep(1000);
                         driver.FindElement(By.Id("password")).SendKeys(minsa_pass + Keys.Enter);
-                        System.Threading.Thread.Sleep(1000);
-                        driver.FindElement(By.Id("password")).SendKeys(Keys.Enter);
+                        
                         System.Threading.Thread.Sleep(5000);
+                        driver.FindElement(By.Id("password")).SendKeys(Keys.Enter);
+                        System.Threading.Thread.Sleep(1000);
 
 
                         //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
@@ -269,12 +273,12 @@ namespace bot_minsa.Classes
                             error_on_validation = false;
                             if (String.IsNullOrEmpty(primer_nombre))
                             {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "primer_nombre en blanco. ");
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "primer_nombre en blanco.");
                                 error_on_validation = true;
                             }
                             if (String.IsNullOrEmpty(primer_apellido))
                             {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "primer_apellido en blanco. ");
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "primer_apellido en blanco.");
                                 error_on_validation = true;
                             }
                             if (String.IsNullOrEmpty(genero))
@@ -301,16 +305,18 @@ namespace bot_minsa.Classes
 
                             if (String.IsNullOrEmpty(fecha_nacimiento))
                             {
-                                string fecha_nacimiento_minsa = driver.FindElement(By.Id("genero")).GetAttribute("value").Trim();
-                                if (String.IsNullOrEmpty(fecha_nacimiento_minsa))
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_nacimiento en blanco. ");
-                                    error_on_validation = true;
-                                }
-                                else
-                                {
-                                    fecha_nacimiento = fecha_nacimiento_minsa;
-                                }
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_nacimiento en blanco.");
+                                error_on_validation = true;
+                                //string fecha_nacimiento_minsa = driver.FindElement(By.Id("demo_-105")).GetAttribute("value").Trim();
+                                //if (String.IsNullOrEmpty(fecha_nacimiento_minsa))
+                                //{
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_nacimiento en blanco. ");
+                                //    error_on_validation = true;
+                                //}
+                                //else
+                                //{
+                                //    fecha_nacimiento = fecha_nacimiento_minsa;
+                                //}
                             }
                             if (String.IsNullOrEmpty(region))
                             {
@@ -373,6 +379,37 @@ namespace bot_minsa.Classes
                                         }
                                     }
                                 }
+
+                                //intertar click en boton deshacer
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Buscar si está activo el botón 'deshacer'");
+                                IWebElement button_deshacer_verificacion1 = null;
+                                if (TryFindElement(By.XPath("//*[@ng-click='vm.eventUndo()']"), out button_deshacer_verificacion1))
+                                {
+                                    if (button_deshacer_verificacion1.Displayed && button_deshacer_verificacion1.Enabled)
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshacer activo. ");
+                                        try
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en 'Deshacer'.");
+                                            button_deshacer_verificacion1.Click();
+                                            System.Threading.Thread.Sleep(5000);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshcaer no se pudo cliquear. ");
+                                            recargar_pagina = true;
+                                            continue;
+                                        }
+                                    }
+                                    //else
+                                    //{
+                                    //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshacer no esta habilitado. ");
+                                    //    recargar_pagina = true;
+                                    //    continue;
+                                    //}
+                                    
+                                }
+
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Buscando boton 'Nuevo'. ");
                                 var button_nuevo = driver.FindElement(By.XPath("//*[@ng-click='vm.eventNew()']"));
@@ -468,6 +505,17 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_-100")).Click();
                                 driver.FindElement(By.Id("demo_-100")).SendKeys(cedula + Keys.Enter);
                                 System.Threading.Thread.Sleep(1200);
+
+                                IWebElement formato_invalido_label = null;
+                                bool formato_invalido = TryFindElement(By.XPath("//*[contains(., 'Formato no válido')]"), out formato_invalido_label);
+                                if (formato_invalido)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Cédula con formato inválido, requiere REGISTRO MANUAL.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                    recargar_pagina = true;
+                                    continue;
+                                }
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si existe el paciente.");
                                 //validar si existe el paciente
@@ -670,7 +718,7 @@ namespace bot_minsa.Classes
                                     //Género *	demo_-104_value	genero
                                     driver.FindElement(By.Id("demo_-104_value")).Click();
                                     driver.FindElement(By.Id("demo_-104_value")).Clear();
-                                    driver.FindElement(By.Id("demo_-104_value")).SendKeys(genero);
+                                    driver.FindElement(By.Id("demo_-104_value")).SendKeys(genero_completo);
                                     System.Threading.Thread.Sleep(500);
                                     driver.FindElement(By.Id("demo_-104_value")).SendKeys(Keys.Enter);
                                     System.Threading.Thread.Sleep(300);
