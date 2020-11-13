@@ -527,7 +527,41 @@ namespace bot_minsa.Classes
                                     //REGIÓN *	demo_1_value	region
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                                     System.Threading.Thread.Sleep(i * 2000);
+                                   
+                                    //***********************************************************
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar formato de cédula es válido");
+                                    IWebElement formato_no_valido = null;
+                                    //class="orderfield_mark_required ng-scope"
+                                    //driver.findElement(By.xpath("//span[@class='orderfield_mark_required ng-scope']"));
+                                    //driver.FindElement(By.XPath("//*[contains(., 'TextToFind')]"));
+                                    bool existe_formato_no_valido = TryFindElement(By.XPath("//span[@class='orderfield_mark_required ng-scope']"), out formato_no_valido);
+                                    //existe_formato_no_valido = TryFindElement(By.XPath("//*[contains(., 'Formato no válido')]"), out formato_no_valido);
 
+                                    //driver.FindElement(By.XPath("//*[contains(., 'Formato no válido')]"));
+                                    if (existe_formato_no_valido)
+                                    {
+                                        try
+                                        {
+                                            string formato_no_valido_value = formato_no_valido.Text;
+                                            if (formato_no_valido_value == "Formato no válido")
+                                            {
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Error en formato de cédula.");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa a registro MANUAL.");
+                                                update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                                recargar_pagina = true;
+                                                break;
+                                            }
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
+
+                                    }
+
+
+                                    //***********************************************************
                                     IWebElement region_verificacion = null;
                                     existe_elemento = TryFindElement(By.Id("demo_1_value"), out region_verificacion); //driver.FindElement(By.Id("demo_-101"));
                                     System.Threading.Thread.Sleep(i * 500 * 2);
@@ -550,7 +584,13 @@ namespace bot_minsa.Classes
                                                 recargar_pagina = true;
 
 
+
                                             }
+
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Elemento (región) no disponible, seguir intentando.");
+                                            recargar_pagina = true;
+
+                                           
                                         }
                                         else
                                         {
