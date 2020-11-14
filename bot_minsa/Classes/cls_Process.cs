@@ -98,7 +98,7 @@ namespace bot_minsa.Classes
             {
                 //inicializando el nombre del archivo de log generado por el sistema.
 
-                
+
 
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "");
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "*********************************************");
@@ -534,7 +534,7 @@ namespace bot_minsa.Classes
                                     //REGIÓN *	demo_1_value	region
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                                     System.Threading.Thread.Sleep(i * 2000);
-                                   
+
                                     //***********************************************************
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar formato de cédula es válido");
                                     IWebElement formato_no_valido = null;
@@ -594,7 +594,7 @@ namespace bot_minsa.Classes
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Elemento (región) no disponible, seguir intentando.");
                                             recargar_pagina = true;
 
-                                           
+
                                         }
                                         else
                                         {
@@ -876,7 +876,82 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
                                 System.Threading.Thread.Sleep(300);
                                 driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
-                                System.Threading.Thread.Sleep(300);
+                                //System.Threading.Thread.Sleep(300);
+
+
+                                //******************
+
+                                bool fec_nac_valido = false;
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar fecha de nacimiento.");
+                                for (int i = 1; i <= 5; i++)
+                                {
+                                    //REGIÓN *	demo_1_value	region
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                    System.Threading.Thread.Sleep(i * 500);
+
+                                    //***********************************************************
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta la fecha de nacimiento");
+                                    IWebElement fecha_nacimiento_val = null;
+                                    bool existe_fecha_nac = TryFindElement(By.Id("demo_-105"), out fecha_nacimiento_val);
+                                    //existe_formato_no_valido = TryFindElement(By.XPath("//*[contains(., 'Formato no válido')]"), out formato_no_valido);
+
+                                    //driver.FindElement(By.XPath("//*[contains(., 'Formato no válido')]"));
+                                    if (existe_fecha_nac)
+                                    {
+                                        try
+                                        {
+
+                                            DateTime Temp;
+                                            string fecha_nacimiento_val_value = fecha_nacimiento_val.GetAttribute("value");
+                                            if (DateTime.TryParse(fecha_nacimiento_val_value, out Temp) == true)
+                                            {
+                                                fec_nac_valido = true;
+                                            }
+                                            else
+                                            {
+                                                fec_nac_valido = false;
+                                            }
+                                            if (fec_nac_valido)
+                                            {
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Fecha de nacimiento correcta.");
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en formato de fecha de nacimiento.");
+                                                driver.FindElement(By.Id("demo_-105")).Click();
+                                                driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                                System.Threading.Thread.Sleep(300);
+                                                driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                                System.Threading.Thread.Sleep(300);
+                                                driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
+                                                System.Threading.Thread.Sleep(300);
+                                            }
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
+
+                                    }
+                                }
+
+                                if (!fec_nac_valido)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Fecha de nacimiento con formato inválido, requiere REGISTRO MANUAL.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                    recargar_pagina = true;
+                                    continue;
+                                }
+
+                                //***********************************************************
+
+
+                                //******************
+
+
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en fecha_sintomas.");
                                 //FECHA DE SÍNTOMAS *	demo_7	fecha_sintomas

@@ -13,37 +13,38 @@ namespace bot_minsa
         {
             cls_Process oProcess = new cls_Process();
 
-            while (true)
-            {
+            //while (true)
+            //{
 
 
-                //Console.Clear();
+            //    //Console.Clear();
 
-                DateTime now = System.DateTime.Now;
-                var hour = now.Hour;
-                var minute = now.Minute;
-                var current_time = hour + minute / 60;
-                Console.WriteLine(now);
-                Console.WriteLine("---");
-                Console.WriteLine(current_time);
+            //    DateTime now = System.DateTime.Now;
+            //    var hour = now.Hour;
+            //    var minute = now.Minute;
+            //    var current_time = hour + minute / 60;
+            //    Console.WriteLine(now);
+            //    Console.WriteLine("---");
+            //    Console.WriteLine(current_time);
 
-                if (current_time <= 5)
-                {
-                    Console.WriteLine("wait");
-                    System.Threading.Thread.Sleep(1800000);
-                }
-                else
-                {
-                    Console.WriteLine("run");
-                   
-                    oProcess.start_Process();
+            //    if (current_time <= 5)
+            //    {
+            //        Console.WriteLine("wait");
+            //        System.Threading.Thread.Sleep(1800000);
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("run");
 
-
-                }
-                Console.WriteLine(now);
+            oProcess.start_Process();
+            //        System.Threading.Thread.Sleep();
 
 
-            }
+            //    }
+            //    Console.WriteLine(now);
+
+
+            //}
 
 
         }
