@@ -48,6 +48,7 @@ namespace bot_minsa.Classes
         public cls_Process()
         {
         }
+
         public static void log_clear()
         {
             try
@@ -65,8 +66,8 @@ namespace bot_minsa.Classes
             }
             catch (Exception ex)
             {
-                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "ERROR BORRANDO EL LOG ANTERIOR ***********************");
-                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
+                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "ERROR BORRANDO EL LOG ANTERIOR ***********************");
+                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
             }
         }
 
@@ -91,11 +92,13 @@ namespace bot_minsa.Classes
             int counter = 0;
             bool pagina_cargada = false;
             bool existe_elemento = false;
+            log_clear();
+
             try
             {
                 //inicializando el nombre del archivo de log generado por el sistema.
 
-                log_clear();
+                
 
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "");
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "*********************************************");
@@ -105,9 +108,13 @@ namespace bot_minsa.Classes
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Obtener datos de las pruebas a reportar (sp en labcore).");
                 try
                 {
+                    string sp_datos_minsa = ConfigurationManager.AppSettings["sp_datos_minsa"].ToString();
+                    string sp_quantity = ConfigurationManager.AppSettings["sp_quantity"].ToString();
+
                     SqlConnection cnnSP = new SqlConnection(cnnLABCORE);
-                    SqlDataAdapter daSP = new SqlDataAdapter("p_reporte_minsa", cnnSP);
+                    SqlDataAdapter daSP = new SqlDataAdapter(sp_datos_minsa, cnnSP);
                     daSP.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    daSP.SelectCommand.Parameters.Add("@quantity", SqlDbType.Int).Value = int.Parse(sp_quantity);
                     daSP.SelectCommand.CommandTimeout = 60;
                     daSP.Fill(oTableSP);
                 }
@@ -1154,8 +1161,17 @@ namespace bot_minsa.Classes
             }
             catch (Exception ex)
             {
-                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "ERROR ***********************");
-                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
+                try
+                {
+                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "ERROR ***********************");
+                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
+                }
+                catch (Exception)
+                {
+
+                    //throw;
+                }
+
                 error_global = true;
             }
 
