@@ -531,9 +531,6 @@ namespace bot_minsa.Classes
                                     //***********************************************************
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar formato de cédula es válido");
                                     IWebElement formato_no_valido = null;
-                                    //class="orderfield_mark_required ng-scope"
-                                    //driver.findElement(By.xpath("//span[@class='orderfield_mark_required ng-scope']"));
-                                    //driver.FindElement(By.XPath("//*[contains(., 'TextToFind')]"));
                                     bool existe_formato_no_valido = TryFindElement(By.XPath("//span[@class='orderfield_mark_required ng-scope']"), out formato_no_valido);
                                     //existe_formato_no_valido = TryFindElement(By.XPath("//*[contains(., 'Formato no válido')]"), out formato_no_valido);
 
