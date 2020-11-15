@@ -35,8 +35,10 @@ namespace bot_minsa
             //    else
             //    {
             //        Console.WriteLine("run");
-
+            
             oProcess.start_Process();
+            System.Environment.Exit(0);
+            return;
             //        System.Threading.Thread.Sleep();
 
 

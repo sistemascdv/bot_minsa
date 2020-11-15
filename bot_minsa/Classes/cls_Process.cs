@@ -202,16 +202,20 @@ namespace bot_minsa.Classes
                                 recargar_pagina = false;
                                 pagina_cargada = false;
                                 driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
-                                for (int i = 1; i <= 5; i++)
+                                for (int i = 1; i <= 6; i++)
                                 {
-                                    if (i == 1)
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                    //if (i == 1)
+                                    //{
+                                    //    System.Threading.Thread.Sleep(10000 + 4 * i * 1000);
+                                    //}
+                                    if (i == 4)
                                     {
-                                        System.Threading.Thread.Sleep(15000 + 4 * i * 1000);
+                                        driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
                                     }
 
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                                     //driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
-                                    System.Threading.Thread.Sleep(15000 + 4 * i * 1000);
+                                    System.Threading.Thread.Sleep(10000 + 4 * i * 1000);
                                     //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
                                     if (driver.FindElements(By.Id("demo_-10_value")).Count() > 0)
@@ -413,11 +417,11 @@ namespace bot_minsa.Classes
                                         {
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en 'Deshacer'.");
                                             button_deshacer_verificacion1.Click();
-                                            System.Threading.Thread.Sleep(5000);
+                                            System.Threading.Thread.Sleep(3000);
                                         }
                                         catch (Exception)
                                         {
-                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshcaer no se pudo cliquear. ");
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshacer no se pudo cliquear. ");
                                             recargar_pagina = true;
                                             continue;
                                         }
@@ -439,7 +443,7 @@ namespace bot_minsa.Classes
                                 for (int i = 1; i <= 5; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    System.Threading.Thread.Sleep(i * 2000);
+                                    System.Threading.Thread.Sleep(i * 1500);
                                     if ((button_nuevo.Displayed && button_nuevo.Enabled))
                                     {
                                         try
@@ -481,7 +485,10 @@ namespace bot_minsa.Classes
                                 for (int i = 1; i <= 5; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    System.Threading.Thread.Sleep(i * 2000);
+                                    if (i > 1)
+                                    {
+                                        System.Threading.Thread.Sleep(i * 2000);
+                                    }
                                     if ((campo_tipo_documento.Displayed && campo_tipo_documento.Enabled))
                                     {
                                         try
@@ -493,7 +500,7 @@ namespace bot_minsa.Classes
                                             //campo_tipo_documento.SendKeys(Keys.Enter);
                                             campo_tipo_documento.SendKeys(tipo_documento_completo);
                                             campo_tipo_documento.SendKeys(Keys.Enter);
-                                            System.Threading.Thread.Sleep(1000);
+                                            System.Threading.Thread.Sleep(1200);
                                             //driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento);
                                             next_foreach = false;
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en 'tipo de documento'.");
@@ -825,7 +832,7 @@ namespace bot_minsa.Classes
                                     //driver.FindElement(By.Id("demo_-103")).SendKeys(segundo_nombre + Keys.Enter); //no lo usamos
                                     driver.FindElement(By.Id("demo_-109")).Clear();
                                     //driver.FindElement(By.Id("demo_-109")).Clear();
-                                    System.Threading.Thread.Sleep(1000);
+                                    System.Threading.Thread.Sleep(300);
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en genero.");
                                     bool error_on_sex = false;
@@ -967,27 +974,27 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_1_value")).Clear();
                                 driver.FindElement(By.Id("demo_1_value")).Click();
                                 driver.FindElement(By.Id("demo_1_value")).SendKeys(region);
-                                System.Threading.Thread.Sleep(800);
+                                System.Threading.Thread.Sleep(1000);
                                 driver.FindElement(By.Id("demo_1_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(500);
+                                System.Threading.Thread.Sleep(200);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en distrito.");
                                 //DISTRITO *	demo_2_value	distrito
                                 driver.FindElement(By.Id("demo_2_value")).Clear();
                                 driver.FindElement(By.Id("demo_2_value")).Click();
                                 driver.FindElement(By.Id("demo_2_value")).SendKeys(distrito);
-                                System.Threading.Thread.Sleep(800);
+                                System.Threading.Thread.Sleep(1000);
                                 driver.FindElement(By.Id("demo_2_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(500);
+                                System.Threading.Thread.Sleep(200);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en corregimiento.");
                                 //CORREGIMIENTO *	demo_3_value	corregimiento
                                 driver.FindElement(By.Id("demo_3_value")).Clear();
                                 driver.FindElement(By.Id("demo_3_value")).Click();
                                 driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
-                                System.Threading.Thread.Sleep(800);
+                                System.Threading.Thread.Sleep(1000);
                                 driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(500);
+                                System.Threading.Thread.Sleep(200);
 
                                 if (!String.IsNullOrEmpty(direccion))
                                 {
@@ -995,7 +1002,7 @@ namespace bot_minsa.Classes
                                     //Dirección	demo_-112	direccion
                                     driver.FindElement(By.Id("demo_-112")).Clear();
                                     driver.FindElement(By.Id("demo_-112")).SendKeys(direccion + Keys.Enter);
-                                    System.Threading.Thread.Sleep(250);
+                                    System.Threading.Thread.Sleep(200);
                                 }
                                 //PERSONA CONTACTO	demo_5	persona_contacto
                                 //TELÉFONO CONTACTO	demo_6	telefono_contacto
@@ -1016,7 +1023,7 @@ namespace bot_minsa.Classes
                                     //Teléfono	demo_-111	telefono
                                     driver.FindElement(By.Id("demo_-111")).Clear();
                                     driver.FindElement(By.Id("demo_-111")).SendKeys(telefono + Keys.Enter);
-                                    System.Threading.Thread.Sleep(250);
+                                    System.Threading.Thread.Sleep(200);
                                 }
 
                                 ////Tipo de orden *	demo_-4_value	tipo_de_orden
@@ -1038,8 +1045,9 @@ namespace bot_minsa.Classes
                                 //FECHA DE TOMA	demo_10	fecha_de_toma 
                                 driver.FindElement(By.Id("demo_10")).Click();
                                 driver.FindElement(By.Id("demo_10")).SendKeys(Keys.ArrowLeft);
+                                System.Threading.Thread.Sleep(200);
                                 driver.FindElement(By.Id("demo_10")).SendKeys(Keys.ArrowLeft);
-                                System.Threading.Thread.Sleep(300);
+                                System.Threading.Thread.Sleep(200);
                                 driver.FindElement(By.Id("demo_10")).SendKeys(fecha_de_toma);
                                 System.Threading.Thread.Sleep(300);
 
@@ -1047,15 +1055,15 @@ namespace bot_minsa.Classes
                                 //TIPO DE PRUEBA *	demo_12_value	tipo_de_prueba 
                                 driver.FindElement(By.Id("demo_12_value")).Click();
                                 driver.FindElement(By.Id("demo_12_value")).SendKeys(tipo_de_prueba);
-                                System.Threading.Thread.Sleep(800);
+                                System.Threading.Thread.Sleep(900);
                                 driver.FindElement(By.Id("demo_12_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(600);
+                                System.Threading.Thread.Sleep(500);
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en resultado_minsa.");
                                 //RESULTADO *	demo_11_value	resultado_minsa 
                                 driver.FindElement(By.Id("demo_11_value")).Click();
                                 driver.FindElement(By.Id("demo_11_value")).SendKeys(resultado_minsa);
-                                System.Threading.Thread.Sleep(800);
+                                System.Threading.Thread.Sleep(900);
                                 driver.FindElement(By.Id("demo_11_value")).SendKeys(Keys.Enter);
                                 System.Threading.Thread.Sleep(500);
 
@@ -1066,8 +1074,9 @@ namespace bot_minsa.Classes
                                 //FECHA RESULTADO *	demo_13	fecha_resultado
                                 driver.FindElement(By.Id("demo_13")).Click();
                                 driver.FindElement(By.Id("demo_13")).SendKeys(Keys.ArrowLeft);
+                                System.Threading.Thread.Sleep(200);
                                 driver.FindElement(By.Id("demo_13")).SendKeys(Keys.ArrowLeft);
-                                System.Threading.Thread.Sleep(300);
+                                System.Threading.Thread.Sleep(900);
                                 driver.FindElement(By.Id("demo_13")).SendKeys(fecha_resultado);
                                 System.Threading.Thread.Sleep(300);
 
@@ -1078,7 +1087,7 @@ namespace bot_minsa.Classes
                                     //TIPO DE PACIENTE	demo_14_value	tipo_de_paciente
                                     driver.FindElement(By.Id("demo_14_value")).Click();
                                     driver.FindElement(By.Id("demo_14_value")).SendKeys(tipo_de_paciente);
-                                    System.Threading.Thread.Sleep(800);
+                                    System.Threading.Thread.Sleep(900);
                                     driver.FindElement(By.Id("demo_14_value")).SendKeys(Keys.Enter);
                                     //System.Threading.Thread.Sleep(400);
                                 }
@@ -1096,7 +1105,7 @@ namespace bot_minsa.Classes
                                     //TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
                                     driver.FindElement(By.Id("demo_15_value")).Click();
                                     driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
-                                    System.Threading.Thread.Sleep(800);
+                                    System.Threading.Thread.Sleep(700);
                                     driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
                                     //System.Threading.Thread.Sleep(500);
                                 }
@@ -1121,7 +1130,7 @@ namespace bot_minsa.Classes
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
                                     //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
                                     bool error_al_guardar = false;
-                                    for (int i = 1; i <= 4; i++)
+                                    for (int i = 1; i <= 5; i++)
                                     {
                                         System.Threading.Thread.Sleep(3000 + i * 2000);
                                         //evaluar si boton nuevo esta disabled
@@ -1261,7 +1270,8 @@ namespace bot_minsa.Classes
                 Send_Email_Log();
             }
 
-            //driver.Close();
+            driver.Close();
+            
 
             #endregion
 
