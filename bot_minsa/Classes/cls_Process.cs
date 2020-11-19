@@ -988,8 +988,8 @@ namespace bot_minsa.Classes
                                 //******************
 
                                 bool region_valido = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar región.");
-                                for (int i = 1; i <= 5; i++)
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar region.");
+                                for (int i = 1; i <= 3; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                                     //System.Threading.Thread.Sleep(i * 2000);
@@ -1062,7 +1062,7 @@ namespace bot_minsa.Classes
 
                                 bool distrito_valido = false;
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar distrito.");
-                                for (int i = 1; i <= 5; i++)
+                                for (int i = 1; i <= 3; i++)
                                 {
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
@@ -1268,7 +1268,7 @@ namespace bot_minsa.Classes
                                
                                 bool fecha_de_toma_valido = false;
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar fecha_de_toma.");
-                                for (int i = 1; i <= 5; i++)
+                                for (int i = 1; i <= 3; i++)
                                 {
                                     //REGIÓN *	demo_1_value	region
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
@@ -1351,7 +1351,7 @@ namespace bot_minsa.Classes
 
                                 bool tipo_de_prueba_valido = false;
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar tipo_de_prueba.");
-                                for (int i = 1; i <= 5; i++)
+                                for (int i = 1; i <= 3; i++)
                                 {
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
@@ -1427,7 +1427,7 @@ namespace bot_minsa.Classes
 
                                 bool resultado_minsa_valido = false;
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar resultado_minsa.");
-                                for (int i = 1; i <= 5; i++)
+                                for (int i = 1; i <= 3; i++)
                                 {
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
