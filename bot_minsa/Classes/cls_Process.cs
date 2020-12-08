@@ -201,7 +201,7 @@ namespace bot_minsa.Classes
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Accediendo al formulario");
                                 recargar_pagina = false;
                                 pagina_cargada = false;
-                                driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
+                                //driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
                                 for (int i = 1; i <= 6; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
@@ -214,7 +214,7 @@ namespace bot_minsa.Classes
                                         driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
                                     }
 
-                                    //driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
+                                    driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
                                     System.Threading.Thread.Sleep(10000 + 4 * i * 1000);
                                     //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
@@ -275,7 +275,8 @@ namespace bot_minsa.Classes
                             string tipo_de_orden = oRow["tipo_de_orden"].ToString();
                             string tipo_de_orden_completo = oRow["tipo_de_orden_completo"].ToString();
                             string numero_interno = oRow["numero_interno"].ToString();
-                            //string procedencia_muestra = oRow["procedencia_muestra"].ToString();
+                            string procedencia_muestra = oRow["procedencia_muestra"].ToString();
+                            string procedencia_muestra_completo = oRow["procedencia_muestra_completo"].ToString();
                             string fecha_de_toma = oRow["fecha_de_toma"].ToString();
                             string tipo_de_prueba = oRow["tipo_de_prueba"].ToString();
                             string tipo_de_prueba_completo = oRow["tipo_de_prueba_completo"].ToString();
@@ -672,11 +673,27 @@ namespace bot_minsa.Classes
                                                 }
                                                 else
                                                 {
-                                                    //valor incoherente: valor vacio con campo inactivo. Puede que la página no ha terminado de cargar
-                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'Primer Apellido': inactivo pero con valor vacío.");
-                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Pasar al siguiente intento");
-                                                    next_foreach = true;
+                                                    IWebElement primer_nombre_verificacion = null;
+                                                    existe_elemento = TryFindElement(By.Id("demo_-103"), out primer_nombre_verificacion);
+
+                                                    value = primer_nombre_verificacion.GetAttribute("value").Trim();
+                                                    if (!String.IsNullOrEmpty(value))
+                                                    {
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'Primer Apellido', leído con éxito.");
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente existe.");
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        //valor incoherente: valor vacio con campo inactivo. Puede que la página no ha terminado de cargar
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'Primer Apellido' / 'Primer nombre': inactivo pero con valor vacío.");
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Pasar al siguiente intento");
+                                                        next_foreach = true;
+                                                        recargar_pagina = true;
+                                                    }
+
                                                 }
+                                                
                                             }
                                             catch (Exception)
                                             {
@@ -1243,9 +1260,16 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_8")).SendKeys(numero_interno + Keys.Enter);
                                 System.Threading.Thread.Sleep(300);
 
-                                ////PROCEDENCIA MUESTRA	demo_9_value	procedencia_muestra 
-                                //driver.FindElement(By.Id("demo_9_value")).SendKeys(oRow["procedencia_muestra"].ToString() + Keys.Enter);
-                                ////System.Threading.Thread.Sleep(1000);
+                                //PROCEDENCIA MUESTRA	demo_9_value	procedencia_muestra 
+                                driver.FindElement(By.Id("demo_9_value")).Clear();
+                                driver.FindElement(By.Id("demo_9_value")).Click();
+                                driver.FindElement(By.Id("demo_9_value")).SendKeys(procedencia_muestra_completo);
+                                System.Threading.Thread.Sleep(400);
+                                driver.FindElement(By.Id("demo_9_value")).SendKeys(Keys.Enter);
+                                System.Threading.Thread.Sleep(200);
+
+                                //driver.FindElement(By.Id("demo_9_value")).SendKeys(procedencia_muestra_completo + Keys.Enter);
+                                //System.Threading.Thread.Sleep(500);
 
 
 
