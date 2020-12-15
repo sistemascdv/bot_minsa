@@ -363,14 +363,20 @@ namespace bot_minsa.Classes
                                 //corregimiento = "873."; //873. SIN DEFINIR
                                 //corregimiento = "873. SIN DEFINIR";
                             }
-                            if (resultado_valor == "1") //para resultados positivos es obligatorio un telefono
+                            if (String.IsNullOrEmpty(direccion))
                             {
-                                if (String.IsNullOrEmpty(telefono))
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
-                                    error_on_validation = true;
-                                }
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
+                                error_on_validation = true;
                             }
+
+                            //if (resultado_valor == "1") //para resultados positivos es obligatorio un telefono
+                            //{
+                            if (String.IsNullOrEmpty(telefono))
+                            {
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
+                                error_on_validation = true;
+                            }
+                            //}
 
                             if (error_on_validation)
                             {
@@ -693,7 +699,7 @@ namespace bot_minsa.Classes
                                                     }
 
                                                 }
-                                                
+
                                             }
                                             catch (Exception)
                                             {
@@ -980,15 +986,6 @@ namespace bot_minsa.Classes
 
 
 
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en fecha_sintomas.");
-                                //FECHA DE SÍNTOMAS *	demo_7	fecha_sintomas
-                                driver.FindElement(By.Id("demo_7")).Click();
-                                driver.FindElement(By.Id("demo_7")).SendKeys(Keys.ArrowLeft);
-                                System.Threading.Thread.Sleep(300);
-                                driver.FindElement(By.Id("demo_7")).SendKeys(Keys.ArrowLeft);
-                                System.Threading.Thread.Sleep(300);
-                                driver.FindElement(By.Id("demo_7")).SendKeys(fecha_sintomas);
-                                System.Threading.Thread.Sleep(300);
 
 
 
@@ -1272,8 +1269,17 @@ namespace bot_minsa.Classes
                                 //System.Threading.Thread.Sleep(500);
 
 
+                                /////////    FECHA_DE_SINTOMAS
 
-
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en fecha_sintomas.");
+                                //FECHA DE SÍNTOMAS *	demo_18	fecha_sintomas
+                                driver.FindElement(By.Id("demo_18")).Click();
+                                driver.FindElement(By.Id("demo_18")).SendKeys(Keys.ArrowLeft);
+                                System.Threading.Thread.Sleep(300);
+                                driver.FindElement(By.Id("demo_18")).SendKeys(Keys.ArrowLeft);
+                                System.Threading.Thread.Sleep(300);
+                                driver.FindElement(By.Id("demo_18")).SendKeys(fecha_sintomas);
+                                System.Threading.Thread.Sleep(300);
 
                                 /////////    FECHA_DE_TOMA
                                 ///
@@ -1289,7 +1295,7 @@ namespace bot_minsa.Classes
 
 
                                 //******************
-                               
+
                                 bool fecha_de_toma_valido = false;
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar fecha_de_toma.");
                                 for (int i = 1; i <= 3; i++)
@@ -1817,13 +1823,48 @@ namespace bot_minsa.Classes
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en guardar. ");
                                     button_guardar.Click();
+
+
+
                                     //validar que registro se guardado
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
                                     //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
                                     bool error_al_guardar = false;
-                                    for (int i = 1; i <= 3; i++)
+                                    for (int i = 1; i <= 6; i++)
                                     {
+
+                                        //validar si aparece el boton de seguro si desea guardar?
+                                        //***************
+                                        //***********************************************************
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si se muestra el modal de seguro qye desea guardar");
+                                        IWebElement seguro_desea_guardar = null;
+                                        bool existe_seguro_desea_guardar = TryFindElement(By.XPath("//*[@ng-click='vm.confirmationsave()']"), out seguro_desea_guardar);
+
+                                        if (existe_seguro_desea_guardar)
+                                        {
+                                            try
+                                            {
+                                                System.Threading.Thread.Sleep(1000);
+                                                seguro_desea_guardar.Click();
+
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                            }
+
+                                        }
+                                        //***************
+
                                         System.Threading.Thread.Sleep(3000 + i * 2000);
+
+
+
+
+
+
+
+
                                         //evaluar si boton nuevo esta disabled
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Intento: " + i.ToString());
                                         IWebElement button_nuevo_verificacion = null;// driver.FindElement(By.XPath("//*[@ng-click='vm.eventNew()']"));
