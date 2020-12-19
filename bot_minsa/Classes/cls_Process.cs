@@ -351,14 +351,14 @@ namespace bot_minsa.Classes
                             }
                             if (String.IsNullOrEmpty(distrito))
                             {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "distrito en blanco. Se toma 95. SIN DEFINIR");
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "distrito en blanco.");
                                 error_on_validation = true;
                                 //distrito = "95."; //95. SIN DEFINIR
                                 //distrito_completo = "95. SIN DEFINIR";
                             }
                             if (String.IsNullOrEmpty(corregimiento))
                             {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento en blanco. Se toma 873. SIN DEFINIR");
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento en blanco.");
                                 error_on_validation = true;
                                 //corregimiento = "873."; //873. SIN DEFINIR
                                 //corregimiento = "873. SIN DEFINIR";
@@ -991,6 +991,7 @@ namespace bot_minsa.Classes
 
                                 //////////////          REGION
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en region.");
+                                region = region_completo;
                                 //REGIÓN *	demo_1_value	region
                                 driver.FindElement(By.Id("demo_1_value")).Clear();
                                 driver.FindElement(By.Id("demo_1_value")).Click();
@@ -1064,6 +1065,7 @@ namespace bot_minsa.Classes
 
                                 //////////////          DISTRITO
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en distrito.");
+                                distrito = distrito_completo;
                                 //DISTRITO *	demo_2_value	distrito
                                 driver.FindElement(By.Id("demo_2_value")).Clear();
                                 driver.FindElement(By.Id("demo_2_value")).Click();
@@ -1138,8 +1140,9 @@ namespace bot_minsa.Classes
 
 
                                 //////////////          CORREGIMIENTO
-                                string[] words = corregimiento_completo.Split('.');
-                                corregimiento = words[1].Trim();
+                                //string[] words = corregimiento_completo.Split('.');
+                                //corregimiento = words[1].Trim();
+                                corregimiento = corregimiento_completo;
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en corregimiento.");
                                 //CORREGIMIENTO *	demo_3_value	corregimiento
                                 driver.FindElement(By.Id("demo_3_value")).Clear();
@@ -1227,16 +1230,18 @@ namespace bot_minsa.Classes
                                 //PERSONA CONTACTO	demo_5	persona_contacto
                                 //TELÉFONO CONTACTO	demo_6	telefono_contacto
 
-                                //if (!String.IsNullOrEmpty(correo))
-                                //{
-                                //    string[] correo_values = correo.Trim().Split(',');
-                                //    string primer_correo = correo_values[0];
-                                //    //Correo	demo_-106	correo
-                                //    driver.FindElement(By.Id("demo_-106")).Clear();
-                                //    driver.FindElement(By.Id("demo_-106")).SendKeys(primer_correo + Keys.Enter);
-                                //    System.Threading.Thread.Sleep(1000);
-                                //}
+                                //correo ELECTRONICO
+                                if (!String.IsNullOrEmpty(correo))
+                                {
+                                    string[] correo_values = correo.Trim().Split(',');
+                                    string primer_correo = correo_values[0];
+                                    //Correo	demo_-106	correo
+                                    driver.FindElement(By.Id("demo_-106")).Clear();
+                                    driver.FindElement(By.Id("demo_-106")).SendKeys(primer_correo + Keys.Enter);
+                                    System.Threading.Thread.Sleep(400);
+                                }
 
+                                //TELEFONO
                                 if (!String.IsNullOrEmpty(telefono))
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en telefono.");
