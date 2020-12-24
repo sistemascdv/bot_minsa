@@ -137,7 +137,7 @@ namespace bot_minsa.Classes
 
 
                         pagina_cargada = false;
-                        for (int i = 1; i <= 5; i++)
+                        for (int i = 1; i <= 12; i++)
                         {
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                             try
@@ -345,18 +345,18 @@ namespace bot_minsa.Classes
                                 //    fecha_nacimiento = fecha_nacimiento_minsa;
                                 //}
                             }
-                            if (String.IsNullOrEmpty(region))
-                            {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "region en blanco. ");
-                                error_on_validation = true;
-                            }
-                            if (String.IsNullOrEmpty(distrito))
-                            {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "distrito en blanco.");
-                                error_on_validation = true;
-                                //distrito = "95."; //95. SIN DEFINIR
-                                //distrito_completo = "95. SIN DEFINIR";
-                            }
+                            //if (String.IsNullOrEmpty(region))
+                            //{
+                            //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "region en blanco. ");
+                            //    error_on_validation = true;
+                            //}
+                            //if (String.IsNullOrEmpty(distrito))
+                            //{
+                            //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "distrito en blanco.");
+                            //    error_on_validation = true;
+                            //    //distrito = "95."; //95. SIN DEFINIR
+                            //    //distrito_completo = "95. SIN DEFINIR";
+                            //}
                             if (String.IsNullOrEmpty(corregimiento))
                             {
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento en blanco.");
@@ -540,7 +540,8 @@ namespace bot_minsa.Classes
                                 //Cédula *	demo_-100	cedula
                                 driver.FindElement(By.Id("demo_-100")).Click();
                                 driver.FindElement(By.Id("demo_-100")).Clear();
-                                driver.FindElement(By.Id("demo_-100")).SendKeys(cedula + Keys.Enter);
+                                driver.FindElement(By.Id("demo_-100")).SendKeys(cedula);
+                                driver.FindElement(By.Id("demo_-100")).SendKeys(Keys.Enter);
 
                                 //bool error_on_cedula = false;
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si los elemntos de la página cargaron (con click en region).");
@@ -1836,7 +1837,7 @@ namespace bot_minsa.Classes
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
                                     //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
                                     bool error_al_guardar = false;
-                                    for (int i = 1; i <= 6; i++)
+                                    for (int i = 1; i <= 3; i++)
                                     {
 
                                         //validar si aparece el boton de seguro si desea guardar?
