@@ -202,7 +202,7 @@ namespace bot_minsa.Classes
                                 recargar_pagina = false;
                                 pagina_cargada = false;
                                 //driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
-                                for (int i = 1; i <= 6; i++)
+                                for (int i = 1; i <= 1160; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                                     //if (i == 1)
@@ -215,7 +215,8 @@ namespace bot_minsa.Classes
                                     }
 
                                     driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
-                                    System.Threading.Thread.Sleep(10000 + 4 * i * 1000);
+                                    int i_aux = i <= 10 ? i : 10;
+                                    System.Threading.Thread.Sleep(10000 + 4 * i_aux * 1000);
                                     //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
                                     if (driver.FindElements(By.Id("demo_-10_value")).Count() > 0)
