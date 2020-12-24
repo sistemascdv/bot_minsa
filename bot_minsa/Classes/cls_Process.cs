@@ -800,6 +800,7 @@ namespace bot_minsa.Classes
                                                 //en caso de no coincidir el nombre añadir nota
                                                 //Comentario de la orden	ui-tinymce-6	comentario_de_la_orden
                                                 commentario_box.Click();
+                                                commentario_box.Clear();
                                                 commentario_box.SendKeys(comentario_de_la_orden);
                                                 System.Threading.Thread.Sleep(800);
                                             }
