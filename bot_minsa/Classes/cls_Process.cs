@@ -19,6 +19,8 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.Events;
+//using OpenQA.Selenium.Support.PageObjects;
 
 namespace bot_minsa.Classes
 {
@@ -44,7 +46,23 @@ namespace bot_minsa.Classes
         string cnnLABCORE = ConfigurationManager.ConnectionStrings["labcore"].ConnectionString;
         //FirefoxDriver driver = new FirefoxDriver();
 
-        IWebDriver driver = new FirefoxDriver();
+        public static IWebDriver driver = new FirefoxDriver();
+         
+        //// Wrapping parent driver             
+        //EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(driver);
+
+        //// Attaching events             
+        //// Attaching click events      
+        //eventFiringWebDriver
+        //eventFiringWebDriver.ElementClicking += EventFiringWebDriver_ElementClicking;
+
+////Click events
+//// Attaching click events             
+//eventFiringWebDriver.ElementClicking += EventFiringWebDriver_ElementClicking; 
+//eventFiringWebDriver.ElementClicked += EventFiringWebDriver_ElementClicked; 
+
+
+
         public cls_Process()
         {
         }
@@ -70,9 +88,35 @@ namespace bot_minsa.Classes
                 //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
             }
         }
+        //private void EventFiringWebDriver_ElementClicking(object sender, WebElementEventArgs e)
+        //{
+        //    Console.WriteLine("Element clicking");
+        //    Console.WriteLine(e);
+        //    Console.WriteLine(sender);
+
+        //}
+        //private void EventFiringWebDriver_FindingElement(object sender, FindElementEventArgs e)
+        //{
+        //    Console.WriteLine("Finding element");
+        //}
+
+        //private void EventFiringWebDriver_FindElementCompleted(object sender, FindElementEventArgs e)
+        //{
+        //    Console.WriteLine("Finding element completed");
+        //}
 
         public void start_Process()
         {
+
+            // Wrapping parent driver             
+            //EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(driver);
+            //driver = eventFiringWebDriver;
+            // Attaching events             
+            // Attaching click events      
+            // Element finding events             
+            //eventFiringWebDriver.FindingElement += EventFiringWebDriver_FindingElement;
+            //eventFiringWebDriver.FindElementCompleted += EventFiringWebDriver_FindElementCompleted;
+           
 
             #region MINSA
 
@@ -425,6 +469,8 @@ namespace bot_minsa.Classes
                                 ////Tipo documento *	demo_-10_value	tipo_documento
                                 //driver.FindElement(By.Id("demo_-10_value")).Click();
                                 //driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento + Keys.Enter);
+                                int cedula_formato_intento = 1;
+                                CedulaFormato:
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Buscando campo 'tipo de documento'. ");
                                 var campo_tipo_documento = driver.FindElement(By.Id("demo_-10_value"));
@@ -507,10 +553,20 @@ namespace bot_minsa.Classes
                                             if (formato_no_valido_value == "Formato no válido")
                                             {
                                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Error en formato de cédula.");
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa a registro MANUAL.");
-                                                update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
-                                                recargar_pagina = true;
-                                                break;
+                                                if (cedula_formato_intento == 1)
+                                                {
+                                                    cedula_formato_intento++;
+                                                    tipo_documento_completo = "PA. PASAPORTE";
+                                                    goto CedulaFormato;
+                                                }
+                                                else
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa a registro MANUAL.");
+                                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                                    recargar_pagina = true;
+                                                    break;
+                                                }
+                                                
                                             }
 
                                         }
@@ -571,6 +627,7 @@ namespace bot_minsa.Classes
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro. (se intentará de nuevo)");
                                     update_labcore_try(l_id); //se añade un intento
                                     continue;
+                                    
                                 }
 
                                 IWebElement formato_invalido_label = null;
@@ -2060,72 +2117,112 @@ namespace bot_minsa.Classes
                                 var button_guardar = driver.FindElement(By.XPath("//*[@ng-click='vm.eventSave()']"));
                                 try
                                 {
+                                    bool error_al_guardar = false;
+                                    bool repetido_guardado = false;
+
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en guardar. ");
                                     button_guardar.Click();
 
-
-
-                                    //validar que registro se guardado
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
-                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
-                                    bool error_al_guardar = false;
-                                    for (int i = 1; i <= 6; i++)
+                                    //buscar si es repetida
+                                    System.Threading.Thread.Sleep(1200);
+                                    IWebElement div_repetido = null;
+                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El externalId ya existe en la base de datos')]"), out div_repetido))
                                     {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                        error_al_guardar = false;
+                                        repetido_guardado = true;
+                                    }
 
-                                        //validar si aparece el boton de seguro si desea guardar?
-                                        //***************
-                                        //***********************************************************
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si se muestra el modal de seguro qye desea guardar");
-                                        IWebElement seguro_desea_guardar = null;
-                                        bool existe_seguro_desea_guardar = TryFindElement(By.XPath("//*[@ng-click='vm.confirmationsave()']"), out seguro_desea_guardar);
+                                    if (!repetido_guardado)
+                                    {
+                                        //validar que registro se guardado
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
+                                        //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
 
-                                        if (existe_seguro_desea_guardar)
+                                        for (int i = 1; i <= 6; i++)
                                         {
+
+                                            //validar si aparece el boton de seguro si desea guardar?
+                                            //***************
+                                            //***********************************************************
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si se muestra el modal de seguro qye desea guardar");
+                                            IWebElement seguro_desea_guardar = null;
+                                            bool existe_seguro_desea_guardar = TryFindElement(By.XPath("//*[@ng-click='vm.confirmationsave()']"), out seguro_desea_guardar);
+
+                                            if (existe_seguro_desea_guardar)
+                                            {
+                                                try
+                                                {
+
+                                                    System.Threading.Thread.Sleep(400);
+                                                    seguro_desea_guardar.Click();
+
+                                                    //buscar si es repetida
+                                                    System.Threading.Thread.Sleep(1000);
+                                                    div_repetido = null;
+                                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El externalId ya existe en la base de datos')]"), out div_repetido))
+                                                    {
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                        error_al_guardar = false;
+                                                        repetido_guardado = true;
+                                                        break;
+                                                    }
+
+                                                }
+                                                catch (Exception)
+                                                {
+
+                                                }
+
+                                            }
+                                            //***************
+
+                                            System.Threading.Thread.Sleep(3000 + i * 2000);
+
+
+                                            //evaluar si boton nuevo esta disabled
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Intento: " + i.ToString());
+                                            IWebElement button_nuevo_verificacion = null;// driver.FindElement(By.XPath("//*[@ng-click='vm.eventNew()']"));
+                                            if (TryFindElement(By.XPath("//*[@ng-click='vm.eventNew()']"), out button_nuevo_verificacion))
+                                            {
+                                                if ((!button_nuevo_verificacion.Enabled) && button_guardar.Enabled)
+                                                {
+                                                    error_al_guardar = true;
+                                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta desactivado (no se ha terminado de guardar).");
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "No se ha terminado de guardar.");
+                                                    //no se ha terminado de guardar.
+                                                    //esperar
+                                                }
+                                                else
+                                                {
+                                                    error_al_guardar = false;
+                                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta activo.");
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Registro guardado, formulario listo para otro registro.");
+                                                    break;
+                                                }
+                                            }
+
                                             try
                                             {
-                                                System.Threading.Thread.Sleep(1000);
-                                                seguro_desea_guardar.Click();
+                                                button_guardar.Click();
 
+                                                //buscar si es repetida
+                                                System.Threading.Thread.Sleep(500*i);
+                                                 div_repetido = null;
+                                                if (TryFindElement(By.XPath("//div[contains(text(), 'El externalId ya existe en la base de datos')]"), out div_repetido))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                    error_al_guardar = false;
+                                                    repetido_guardado = true;
+                                                }
                                             }
                                             catch (Exception)
                                             {
-
-                                            }
-
-                                        }
-                                        //***************
-
-                                        System.Threading.Thread.Sleep(3000 + i * 2000);
-
-
-
-
-
-
-
-
-                                        //evaluar si boton nuevo esta disabled
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Intento: " + i.ToString());
-                                        IWebElement button_nuevo_verificacion = null;// driver.FindElement(By.XPath("//*[@ng-click='vm.eventNew()']"));
-                                        if (TryFindElement(By.XPath("//*[@ng-click='vm.eventNew()']"), out button_nuevo_verificacion))
-                                        {
-                                            if ((!button_nuevo_verificacion.Enabled) && button_guardar.Enabled)
-                                            {
-                                                error_al_guardar = true;
-                                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta desactivado (no se ha terminado de guardar).");
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "No se ha terminado de guardar.");
-                                                //no se ha terminado de guardar.
-                                                //esperar
-                                            }
-                                            else
-                                            {
-                                                error_al_guardar = false;
-                                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El boton 'Nuevo' esta activo.");
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Registro guardado, formulario listo para otro registro.");
-                                                break;
+ 
                                             }
                                         }
                                     }
+                                   
 
                                     if (error_al_guardar)
                                     {
@@ -2155,6 +2252,7 @@ namespace bot_minsa.Classes
                                             }
                                             else
                                             {
+                                                
                                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshacer no esta habilitado. ");
                                                 recargar_pagina = true;
                                             }
@@ -2163,8 +2261,16 @@ namespace bot_minsa.Classes
                                     else
                                     {
                                         //no hubo error se registra como enviado al minsa.
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Datos registrados. ");
-                                        update_labcore_order(l_id, "1");
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Datos registrados. ");
+                                        if (!repetido_guardado)
+                                        {
+                                           
+                                            update_labcore_order(l_id, "1");//esta orden se guarda como nueva
+                                        }
+                                        else
+                                        {
+                                            update_labcore_order(l_id, "2"); //esta orden se guarda como repetido
+                                        }
                                     }
 
                                 }
@@ -2524,11 +2630,11 @@ namespace bot_minsa.Classes
             return true;
         }
 
-        public IWebElement WaitForElement(int seconds, By By, IWebDriver driver)
-        {
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
-            return wait.Until(drv => drv.FindElement(By));
-        }
+        //public IWebElement WaitForElement(int seconds, By By, IWebDriver driver)
+        //{
+        //    var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
+        //    return wait.Until(drv => drv.FindElement(By));
+        //}
 
         public bool update_labcore_order(string l_id, string _minsa_enviado)
         {
@@ -2562,7 +2668,7 @@ namespace bot_minsa.Classes
                 vSql = "UPDATE "
                         + "LABORATORIOS "
                         + "SET "
-                        + "l_minsa_intento = isnull(l_minsa_intento,0) + 1 " 
+                        + "l_minsa_intento = isnull(l_minsa_intento,0) + 1 "
                         + "WHERE "
                         + "l_id = '" + l_id
                         + "'";
@@ -2573,7 +2679,7 @@ namespace bot_minsa.Classes
             catch (Exception ex)
             {
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error actualizando el registro: LABCORE.dbo.LABORATORIOS l_id = '" + l_id + "'");
-                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Consulta: Añadir intento" );
+                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Consulta: Añadir intento");
                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
                 return false;
 
