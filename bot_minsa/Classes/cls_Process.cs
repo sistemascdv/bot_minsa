@@ -255,6 +255,7 @@ namespace bot_minsa.Classes
                             bool no_tocar_genero = false;
                             bool no_tocar_direcion = false;
                             bool no_tocar_telefono = false;
+                            bool no_tocar_correo = false;
 
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validación de datos. ");
                             string l_id = oRow["l_id"].ToString();
@@ -275,11 +276,11 @@ namespace bot_minsa.Classes
                             string distrito_completo = oRow["distrito_completo"].ToString();
                             string corregimiento = oRow["corregimiento"].ToString();
                             string corregimiento_completo = oRow["corregimiento_completo"].ToString();
-                            string direccion = oRow["direccion"].ToString();
+                            string direccion = oRow["direccion"].ToString().Trim();
                             string persona_contacto = oRow["persona_contacto"].ToString();
                             string telefono_contacto = oRow["telefono_contacto"].ToString();
                             string correo = oRow["correo"].ToString();
-                            string telefono = oRow["telefono"].ToString().Replace("+507", "");
+                            string telefono = oRow["telefono"].ToString().Replace("+507", "").Trim();
                             string tipo_de_orden = oRow["tipo_de_orden"].ToString();
                             string tipo_de_orden_completo = oRow["tipo_de_orden_completo"].ToString();
                             string numero_interno = oRow["numero_interno"].ToString();
@@ -410,7 +411,8 @@ namespace bot_minsa.Classes
                                 if (next_foreach)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Despues de 4 intentos no se pudo cliquear botón 'Nuevo'.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa al siguiente registro.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa al siguiente registro. (añandir intento");
+                                    update_labcore_try(l_id); //se añade un intento
                                     recargar_pagina = true;
                                     continue;
                                 }
@@ -468,7 +470,8 @@ namespace bot_minsa.Classes
                                 if (next_foreach)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Despues de varios intentos no se pudo cliquear botón 'tipo de documento'.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa al siguiente registro.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa al siguiente registro. añadir intento");
+                                    update_labcore_try(l_id); //se añade un intento
                                     recargar_pagina = true;
                                     continue;
                                 }
@@ -482,7 +485,7 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_-100")).SendKeys(Keys.Enter);
 
                                 //bool error_on_cedula = false;
-                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si los elemntos de la página cargaron (con click en region).");
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si los elemntos de la página cargaron (con click en region).");
                                 for (int i = 1; i <= 5; i++)
                                 {
                                     //REGIÓN *	demo_1_value	region
@@ -565,7 +568,8 @@ namespace bot_minsa.Classes
                                 if (recargar_pagina)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de varios intentos no se activaron los elementos.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro. (se intentará de nuevo)");
+                                    update_labcore_try(l_id); //se añade un intento
                                     continue;
                                 }
 
@@ -673,7 +677,8 @@ namespace bot_minsa.Classes
                                 if (next_foreach)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Despues de 4 intentos no se pudo leer el campo 'Primer apellido'.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "****Se pasa al siguiente registro.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "****Se pasa al siguiente registro. (Se intentará en otra corrida)");
+                                    update_labcore_try(l_id); //se añade un intento
                                     continue;
                                 }
 
@@ -755,7 +760,7 @@ namespace bot_minsa.Classes
 
                                 #region validacion_adicional
 
-                                string genero_completo_aux = GetElementValueById("demo_-104_value");
+                                string genero_completo_aux = GetElementValueById("demo_-104_value").Replace(".", ". ").ToUpper();
                                 if (!String.IsNullOrEmpty(genero_completo_aux))
                                 {
                                     if (genero_completo_aux == genero_completo)
@@ -856,11 +861,11 @@ namespace bot_minsa.Classes
                                 //}
 
                                 //CORREGIMIENTO *	demo_3_value	corregimiento
-                                string corregimiento_aux = GetElementValueById("demo_3_value");
+                                string corregimiento_aux = GetElementValueById("demo_3_value").Replace(".", ". ");
                                 //DISTRITO *	demo_2_value	distrito
-                                string distrito_aux = GetElementValueById("demo_2_value");
+                                string distrito_aux = GetElementValueById("demo_2_value").Replace(".", ". ");
                                 //REGIÓN *	demo_1_value	region
-                                string region_aux = GetElementValueById("demo_1_value");
+                                string region_aux = GetElementValueById("demo_1_value").Replace(".", ". ");
                                 if (!String.IsNullOrEmpty(corregimiento_aux) && !String.IsNullOrEmpty(distrito_aux) && !String.IsNullOrEmpty(region_aux))
                                 {
 
@@ -887,8 +892,9 @@ namespace bot_minsa.Classes
                                 }
 
                                 //Dirección	demo_-112	direccion
-                                string direccion_aux = GetElementValueById("demo_-112");
-                                if (!String.IsNullOrEmpty(direccion_aux)      )
+                                string direccion_aux = GetElementValueById("demo_-112").Trim();
+                                direccion_aux = Truncate(direccion_aux, 99);
+                                if (!String.IsNullOrEmpty(direccion_aux))
                                 {
                                     if (direccion_aux == direccion)
                                     {
@@ -899,7 +905,8 @@ namespace bot_minsa.Classes
                                         if (String.IsNullOrEmpty(direccion))
                                         {
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
-                                            error_on_validation = true;
+                                            //error_on_validation = true;
+                                            direccion = corregimiento;
                                         }
                                     }
 
@@ -909,16 +916,17 @@ namespace bot_minsa.Classes
                                     if (String.IsNullOrEmpty(direccion))
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
-                                        error_on_validation = true;
+                                        //error_on_validation = true;
+                                        direccion = corregimiento;
                                     }
 
                                 }
 
                                 //Teléfono	demo_-111	telefono
-                                string telefono_aux = GetElementValueById("demo_-111");
+                                string telefono_aux = GetElementValueById("demo_-111").Trim();
                                 if (!String.IsNullOrEmpty(telefono_aux))
                                 {
-                                    if (telefono_aux == telefono)
+                                    if (telefono_aux == telefono || String.IsNullOrEmpty(telefono))
                                     {
                                         no_tocar_telefono = true;
                                     }
@@ -927,7 +935,8 @@ namespace bot_minsa.Classes
                                         if (String.IsNullOrEmpty(telefono))
                                         {
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
-                                            error_on_validation = true;
+                                            //error_on_validation = true;
+                                            telefono = "No aportó";
                                         }
                                     }
 
@@ -937,10 +946,46 @@ namespace bot_minsa.Classes
                                     if (String.IsNullOrEmpty(telefono))
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
-                                        error_on_validation = true;
+                                        //error_on_validation = true;
+                                        telefono = "No aportó";
                                     }
 
                                 }
+
+                                //Correo	demo_-106	correo
+                                string correo_aux = GetElementValueById("demo_-106");
+                                string[] correo_values = correo.Trim().Split(',');
+                                string primer_correo = correo_values[0];
+
+                                if (!String.IsNullOrEmpty(correo_aux))
+                                {
+
+
+                                    if (correo_aux.ToUpper() == primer_correo.ToUpper())
+                                    {
+                                        no_tocar_correo = true;
+                                    }
+                                    else
+                                    {
+                                        if (String.IsNullOrEmpty(correo))
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "correo en blanco. ");
+                                            //error_on_validation = true;
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (String.IsNullOrEmpty(correo))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "correo en blanco. ");
+                                        //error_on_validation = true;
+                                    }
+
+                                }
+
+
 
                                 ////if (resultado_valor == "1") //para resultados positivos es obligatorio un telefono
                                 ////{
@@ -976,40 +1021,56 @@ namespace bot_minsa.Classes
 
                                 if (!paciente_existe)
                                 {
+
+
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en primer_apellido.");
                                     //Primer apellido *	demo_-101	primer_apellido
-                                    //var element_primer_apellido = WaitForElement(2, By.Id("demo_-101"), driver);
-                                    var element_primer_apellido = driver.FindElement(By.Id("demo_-101"));
-                                    //System.Threading.Thread.Sleep(500);
-                                    element_primer_apellido.Click();
-                                    element_primer_apellido.Clear();
-                                    element_primer_apellido.SendKeys(primer_apellido + Keys.Enter);
-                                    System.Threading.Thread.Sleep(300);
+                                    string primer_apellido_aux = GetElementValueById("demo_-101");
+                                    if (primer_apellido_aux != primer_apellido)
+                                    {
+                                        if (!primer_apellido.Contains(primer_apellido_aux) || String.IsNullOrEmpty(primer_apellido_aux))
+                                        //if (!primer_apellido.Contains(primer_apellido_aux ) )
+                                        {
 
-                                    //Primer apellido *	demo_-101	primer_apellido
-                                    //driver.FindElement(By.Id("demo_-101")).Click();
-                                    //driver.FindElement(By.Id("demo_-101")).SendKeys(primer_apellido + Keys.Enter);
-                                    //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(0.3);
-                                    //System.Threading.Thread.Sleep(1000);
+                                            var element_primer_apellido = driver.FindElement(By.Id("demo_-101"));
+                                            //System.Threading.Thread.Sleep(500);
+                                            element_primer_apellido.Click();
+                                            element_primer_apellido.Clear();
+                                            element_primer_apellido.SendKeys(primer_apellido + Keys.Enter);
+                                            System.Threading.Thread.Sleep(300);
+                                        }
+                                    }
 
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en segundo_apellido.");
-                                    //Segundo apellido	demo_-102	segundo_apellido
-                                    driver.FindElement(By.Id("demo_-102")).Click();
+                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en segundo_apellido.");
+                                    ////Segundo apellido	demo_-102	segundo_apellido
+                                    //driver.FindElement(By.Id("demo_-102")).Click();
                                     driver.FindElement(By.Id("demo_-102")).Clear();
-                                    //driver.FindElement(By.Id("demo_-102")).SendKeys(segundo_apellido + Keys.Enter);
-                                    System.Threading.Thread.Sleep(300);
+                                    ////driver.FindElement(By.Id("demo_-102")).SendKeys(segundo_apellido + Keys.Enter);
+                                    //System.Threading.Thread.Sleep(300);
 
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en primer_nombre.");
                                     //Primer nombre *	demo_-103	primer_nombre
-                                    driver.FindElement(By.Id("demo_-103")).Click();
-                                    driver.FindElement(By.Id("demo_-103")).Clear();
-                                    driver.FindElement(By.Id("demo_-103")).SendKeys(primer_nombre + Keys.Enter);
-                                    System.Threading.Thread.Sleep(300);
+                                    string primer_nombre_aux = GetElementValueById("demo_-103");
+                                    if (primer_nombre_aux != primer_nombre)
+                                    {
+                                        if (!primer_nombre.Contains(primer_nombre_aux) || String.IsNullOrEmpty(primer_nombre_aux))
+                                        //if (!primer_nombre.Contains(primer_nombre_aux) )
+                                        {
 
-                                    //Segundo nombre	demo_-103	segundo_nombre
-                                    //driver.FindElement(By.Id("demo_-103")).SendKeys(segundo_nombre + Keys.Enter); //no lo usamos
+                                            driver.FindElement(By.Id("demo_-103")).Click();
+                                            driver.FindElement(By.Id("demo_-103")).Clear();
+                                            driver.FindElement(By.Id("demo_-103")).SendKeys(primer_nombre + Keys.Enter);
+                                            System.Threading.Thread.Sleep(300);
+                                        }
+                                    }
+
+                                    //Segundo nombre	demo_-109	segundo_nombre
+                                    //driver.FindElement(By.Id("demo_-109")).SendKeys(segundo_nombre + Keys.Enter); //no lo usamos
+
                                     driver.FindElement(By.Id("demo_-109")).Clear();
-                                    //driver.FindElement(By.Id("demo_-109")).Clear();
+
+
+
                                     System.Threading.Thread.Sleep(300);
                                     if (!no_tocar_genero)
                                     {
@@ -1396,24 +1457,30 @@ namespace bot_minsa.Classes
 
 
                                 //correo ELECTRONICO
-                                if (!String.IsNullOrEmpty(correo))
+                                if (!no_tocar_correo)
                                 {
-                                    string[] correo_values = correo.Trim().Split(',');
-                                    string primer_correo = correo_values[0];
-                                    //Correo	demo_-106	correo
-                                    driver.FindElement(By.Id("demo_-106")).Clear();
-                                    driver.FindElement(By.Id("demo_-106")).SendKeys(primer_correo + Keys.Enter);
-                                    System.Threading.Thread.Sleep(400);
+                                    if (!String.IsNullOrEmpty(correo))
+                                    {
+                                        //string[] correo_values = correo.Trim().Split(',');
+                                        //string primer_correo = correo_values[0];
+                                        //Correo	demo_-106	correo
+                                        driver.FindElement(By.Id("demo_-106")).Clear();
+                                        driver.FindElement(By.Id("demo_-106")).SendKeys(primer_correo + Keys.Enter);
+                                        System.Threading.Thread.Sleep(400);
+                                    }
                                 }
 
                                 //TELEFONO
-                                if (!String.IsNullOrEmpty(telefono))
+                                if (!no_tocar_telefono)
                                 {
+                                    //if (!String.IsNullOrEmpty(telefono))
+                                    //{
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en telefono.");
                                     //Teléfono	demo_-111	telefono
                                     driver.FindElement(By.Id("demo_-111")).Clear();
                                     driver.FindElement(By.Id("demo_-111")).SendKeys(telefono + Keys.Enter);
                                     System.Threading.Thread.Sleep(200);
+                                    //}
                                 }
 
                                 ////Tipo de orden *	demo_-4_value	tipo_de_orden
@@ -1808,167 +1875,169 @@ namespace bot_minsa.Classes
 
 
 
-                                //////////////          TIPO_DE_PACIENTE
+                                ////////////////          TIPO_DE_PACIENTE
 
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_paciente.");
-                                //TIPO DE PACIENTE	demo_14_value	tipo_de_paciente
-                                driver.FindElement(By.Id("demo_14_value")).Clear();
-                                driver.FindElement(By.Id("demo_14_value")).Click();
-                                driver.FindElement(By.Id("demo_14_value")).SendKeys(tipo_de_paciente);
-                                System.Threading.Thread.Sleep(1000);
-                                driver.FindElement(By.Id("demo_14_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(300);
+                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_paciente.");
+                                ////TIPO DE PACIENTE	demo_14_value	tipo_de_paciente
+                                //driver.FindElement(By.Id("demo_14_value")).Clear();
+                                //driver.FindElement(By.Id("demo_14_value")).Click();
+                                //driver.FindElement(By.Id("demo_14_value")).SendKeys(tipo_de_paciente);
+                                //System.Threading.Thread.Sleep(1000);
+                                //driver.FindElement(By.Id("demo_14_value")).SendKeys(Keys.Enter);
+                                //System.Threading.Thread.Sleep(300);
 
-                                //******************
+                                ////******************
 
-                                bool tipo_de_paciente_valido = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar tipo_de_paciente.");
-                                for (int i = 1; i <= 3; i++)
-                                {
-
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    //System.Threading.Thread.Sleep(i * 2000);
-
-                                    //***********************************************************
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el tipo_de_paciente");
-                                    IWebElement tipo_de_paciente_val = null;
-                                    bool existe_tipo_de_paciente = TryFindElement(By.Id("demo_14_value"), out tipo_de_paciente_val);
-
-                                    if (existe_tipo_de_paciente)
-                                    {
-                                        try
-                                        {
-                                            string tipo_de_paciente_val_value = tipo_de_paciente_val.GetAttribute("value");
-                                            if (!string.IsNullOrEmpty(tipo_de_paciente_val_value))
-                                            {
-                                                tipo_de_paciente_valido = true;
-                                            }
-                                            else
-                                            {
-                                                tipo_de_paciente_valido = false;
-                                            }
-                                            if (tipo_de_paciente_valido)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "tipo_de_paciente correcto.");
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de tipo_de_paciente.");
-                                                driver.FindElement(By.Id("demo_14_value")).Clear();
-                                                driver.FindElement(By.Id("demo_14_value")).Click();
-                                                driver.FindElement(By.Id("demo_14_value")).SendKeys(tipo_de_paciente);
-                                                System.Threading.Thread.Sleep(i * 1500);
-                                                driver.FindElement(By.Id("demo_14_value")).SendKeys(Keys.Enter);
-                                                System.Threading.Thread.Sleep(500);
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-
-                                    }
-                                }
-                                //EN CASO DE ERROR SE OMITE EL TIPO DE PACIENTE PORQUE NO ES OBLIGATORIO
-                                //if (!tipo_de_paciente_valido)
+                                //bool tipo_de_paciente_valido = false;
+                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar tipo_de_paciente.");
+                                //for (int i = 1; i <= 3; i++)
                                 //{
-                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "tipo_de_paciente con formato inválido, requiere REGISTRO MANUAL.");
-                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
-                                //    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
-                                //    recargar_pagina = true;
-                                //    continue;
+
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                //    //System.Threading.Thread.Sleep(i * 2000);
+
+                                //    //***********************************************************
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el tipo_de_paciente");
+                                //    IWebElement tipo_de_paciente_val = null;
+                                //    bool existe_tipo_de_paciente = TryFindElement(By.Id("demo_14_value"), out tipo_de_paciente_val);
+
+                                //    if (existe_tipo_de_paciente)
+                                //    {
+                                //        try
+                                //        {
+                                //            string tipo_de_paciente_val_value = tipo_de_paciente_val.GetAttribute("value");
+                                //            if (!string.IsNullOrEmpty(tipo_de_paciente_val_value))
+                                //            {
+                                //                tipo_de_paciente_valido = true;
+                                //            }
+                                //            else
+                                //            {
+                                //                tipo_de_paciente_valido = false;
+                                //            }
+                                //            if (tipo_de_paciente_valido)
+                                //            {
+                                //                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "tipo_de_paciente correcto.");
+                                //                break;
+                                //            }
+                                //            else
+                                //            {
+                                //                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de tipo_de_paciente.");
+                                //                driver.FindElement(By.Id("demo_14_value")).Clear();
+                                //                driver.FindElement(By.Id("demo_14_value")).Click();
+                                //                driver.FindElement(By.Id("demo_14_value")).SendKeys(tipo_de_paciente);
+                                //                System.Threading.Thread.Sleep(i * 1500);
+                                //                driver.FindElement(By.Id("demo_14_value")).SendKeys(Keys.Enter);
+                                //                System.Threading.Thread.Sleep(500);
+                                //            }
+                                //        }
+                                //        catch (Exception)
+                                //        {
+
+                                //        }
+
+                                //    }
                                 //}
-                                //FIN TIPO_DE_PACIENTE
-                                //***********************************************************
+                                ////EN CASO DE ERROR SE OMITE EL TIPO DE PACIENTE PORQUE NO ES OBLIGATORIO
+                                ////if (!tipo_de_paciente_valido)
+                                ////{
+                                ////    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "tipo_de_paciente con formato inválido, requiere REGISTRO MANUAL.");
+                                ////    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                ////    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                ////    recargar_pagina = true;
+                                ////    continue;
+                                ////}
+                                ////FIN TIPO_DE_PACIENTE
+                                ////***********************************************************
 
 
 
 
-                                //try
+                                ////try
+                                ////{
+                                ////    //intertar colocar tipo_de_muestra
+                                ////    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_muestra.");
+                                ////    //TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
+                                ////    driver.FindElement(By.Id("demo_15_value")).Clear();
+                                ////    driver.FindElement(By.Id("demo_15_value")).Click();
+                                ////    driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
+                                ////    System.Threading.Thread.Sleep(1000);
+                                ////    driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
+                                ////    //System.Threading.Thread.Sleep(500);
+                                ////}
+                                ////catch (Exception)
+                                ////{
+                                ////    //proceso continua porque no es campo obligatorio
+                                ////    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "****Error al añadir el tipo_de_paciente.");
+                                ////    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "***No se pudo añadir el tipo_de_paciente.");
+                                ////}
+                                ////System.Threading.Thread.Sleep(600);
+
+
+                                ////////////////          TIPO_DE_MUESTRA
+
+                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_muestra.");
+                                ////TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
+                                //driver.FindElement(By.Id("demo_15_value")).Clear();
+                                //driver.FindElement(By.Id("demo_15_value")).Click();
+                                //driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
+                                //System.Threading.Thread.Sleep(1000);
+                                //driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
+                                //System.Threading.Thread.Sleep(500);
+
+                                ////******************
+
+                                //bool tipo_de_muestra_valido = false;
+                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar tipo_de_muestra.");
+                                //for (int i = 1; i <= 3; i++)
                                 //{
-                                //    //intertar colocar tipo_de_muestra
-                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_muestra.");
-                                //    //TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
-                                //    driver.FindElement(By.Id("demo_15_value")).Clear();
-                                //    driver.FindElement(By.Id("demo_15_value")).Click();
-                                //    driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
-                                //    System.Threading.Thread.Sleep(1000);
-                                //    driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
-                                //    //System.Threading.Thread.Sleep(500);
+
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                //    //System.Threading.Thread.Sleep(i * 2000);
+
+                                //    //***********************************************************
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el tipo_de_muestra");
+                                //    IWebElement tipo_de_muestra_val = null;
+                                //    bool existe_tipo_de_muestra = TryFindElement(By.Id("demo_15_value"), out tipo_de_muestra_val);
+
+                                //    if (existe_tipo_de_muestra)
+                                //    {
+                                //        try
+                                //        {
+                                //            string tipo_de_muestra_val_value = tipo_de_muestra_val.GetAttribute("value");
+                                //            if (!string.IsNullOrEmpty(tipo_de_muestra_val_value))
+                                //            {
+                                //                tipo_de_muestra_valido = true;
+                                //            }
+                                //            else
+                                //            {
+                                //                tipo_de_muestra_valido = false;
+                                //            }
+                                //            if (tipo_de_muestra_valido)
+                                //            {
+                                //                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "tipo_de_muestra correcto.");
+                                //                break;
+                                //            }
+                                //            else
+                                //            {
+                                //                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_muestra.");
+                                //                //TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
+                                //                driver.FindElement(By.Id("demo_15_value")).Clear();
+                                //                driver.FindElement(By.Id("demo_15_value")).Click();
+                                //                driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
+                                //                System.Threading.Thread.Sleep(i * 1500);
+                                //                driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
+                                //                System.Threading.Thread.Sleep(500);
+                                //            }
+                                //        }
+                                //        catch (Exception)
+                                //        {
+
+                                //        }
+
+                                //    }
                                 //}
-                                //catch (Exception)
-                                //{
-                                //    //proceso continua porque no es campo obligatorio
-                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "****Error al añadir el tipo_de_paciente.");
-                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "***No se pudo añadir el tipo_de_paciente.");
-                                //}
-                                //System.Threading.Thread.Sleep(600);
 
 
-                                //////////////          TIPO_DE_MUESTRA
-
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_muestra.");
-                                //TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
-                                driver.FindElement(By.Id("demo_15_value")).Clear();
-                                driver.FindElement(By.Id("demo_15_value")).Click();
-                                driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
-                                System.Threading.Thread.Sleep(1000);
-                                driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(500);
-
-                                //******************
-
-                                bool tipo_de_muestra_valido = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar tipo_de_muestra.");
-                                for (int i = 1; i <= 3; i++)
-                                {
-
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    //System.Threading.Thread.Sleep(i * 2000);
-
-                                    //***********************************************************
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el tipo_de_muestra");
-                                    IWebElement tipo_de_muestra_val = null;
-                                    bool existe_tipo_de_muestra = TryFindElement(By.Id("demo_15_value"), out tipo_de_muestra_val);
-
-                                    if (existe_tipo_de_muestra)
-                                    {
-                                        try
-                                        {
-                                            string tipo_de_muestra_val_value = tipo_de_muestra_val.GetAttribute("value");
-                                            if (!string.IsNullOrEmpty(tipo_de_muestra_val_value))
-                                            {
-                                                tipo_de_muestra_valido = true;
-                                            }
-                                            else
-                                            {
-                                                tipo_de_muestra_valido = false;
-                                            }
-                                            if (tipo_de_muestra_valido)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "tipo_de_muestra correcto.");
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en tipo_de_muestra.");
-                                                //TIPO DE MUESTRA	demo_15_value	tipo_de_muestra
-                                                driver.FindElement(By.Id("demo_15_value")).Clear();
-                                                driver.FindElement(By.Id("demo_15_value")).Click();
-                                                driver.FindElement(By.Id("demo_15_value")).SendKeys(tipo_de_muestra_completo);
-                                                System.Threading.Thread.Sleep(i * 1500);
-                                                driver.FindElement(By.Id("demo_15_value")).SendKeys(Keys.Enter);
-                                                System.Threading.Thread.Sleep(500);
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-
-                                    }
-                                }
                                 //EN CASO DE ERROR SE OMITE EL TIPO DE MUESTRA PORQUE NO ES OBLIGATORIO
                                 //if (!tipo_de_muestra_valido)
                                 //{
@@ -2123,6 +2192,7 @@ namespace bot_minsa.Classes
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error durante la inserción de datos en la página.");
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro");
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
+                                update_labcore_try(l_id); //se añade un intento
                                 recargar_pagina = true;
                                 continue; //pasar al suguiente registro
                                 //break; //end for
@@ -2485,7 +2555,41 @@ namespace bot_minsa.Classes
 
             }
         }
+        public bool update_labcore_try(string l_id)
+        {
+            try  //update labcore.dbo.laboratorio.l_minsa_enviado = 3 // 3 = validation error
+            {
+                vSql = "UPDATE "
+                        + "LABORATORIOS "
+                        + "SET "
+                        + "l_minsa_intento = isnull(l_minsa_intento,0) + 1 " 
+                        + "WHERE "
+                        + "l_id = '" + l_id
+                        + "'";
+                SqlExecuteNonQuery(vSql, cnnLABCORE);
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error actualizando el registro: LABCORE.dbo.LABORATORIOS l_id = '" + l_id + "'");
+                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Consulta: Añadir intento" );
+                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, ex.Message.ToString());
+                return false;
+
+            }
+        }
+
+        public string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) { return value; }
+
+            return value.Substring(0, Math.Min(value.Length, maxLength));
+        }
+
 
     }
+
+
 }
 
