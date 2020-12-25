@@ -249,6 +249,13 @@ namespace bot_minsa.Classes
                                  "], Apellido: [" + oRow["primer_apellido"].ToString() +
                                 "]");
 
+
+                            bool no_tocar_demograficos = false;
+                            bool no_tocar_fecha_nacimiento = false;
+                            bool no_tocar_genero = false;
+                            bool no_tocar_direcion = false;
+                            bool no_tocar_telefono = false;
+
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validación de datos. ");
                             string l_id = oRow["l_id"].ToString();
                             string tipo_documento = oRow["tipo_documento"].ToString();
@@ -296,7 +303,7 @@ namespace bot_minsa.Classes
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Numero de orden: " + numero_interno);
                             #endregion
 
-                            #region validacion_de_datos
+                            #region validacion_de_datos_inicial
                             error_on_validation = false;
                             if (String.IsNullOrEmpty(primer_nombre))
                             {
@@ -308,76 +315,7 @@ namespace bot_minsa.Classes
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "primer_apellido en blanco.");
                                 error_on_validation = true;
                             }
-                            if (String.IsNullOrEmpty(genero))
-                            {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
-                                error_on_validation = true;
-                                ////buscar si 
-                                //string genero_minsa = driver.FindElement(By.Id("demo_-104_value")).GetAttribute("value").Trim();
-                                //if (String.IsNullOrEmpty(genero_minsa))
-                                //{
-                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
-                                //    error_on_validation = true;
-                                //}
-                                //else
-                                //{
-                                //    genero = genero_minsa.Replace(".", ". ");
-                                //    if (genero.Trim() == ".")
-                                //    {
-                                //        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
-                                //        error_on_validation = true;
-                                //    }
-                                //}
-                            }
 
-                            if (String.IsNullOrEmpty(fecha_nacimiento))
-                            {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_nacimiento en blanco.");
-                                error_on_validation = true;
-                                //string fecha_nacimiento_minsa = driver.FindElement(By.Id("demo_-105")).GetAttribute("value").Trim();
-                                //if (String.IsNullOrEmpty(fecha_nacimiento_minsa))
-                                //{
-                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_nacimiento en blanco. ");
-                                //    error_on_validation = true;
-                                //}
-                                //else
-                                //{
-                                //    fecha_nacimiento = fecha_nacimiento_minsa;
-                                //}
-                            }
-                            //if (String.IsNullOrEmpty(region))
-                            //{
-                            //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "region en blanco. ");
-                            //    error_on_validation = true;
-                            //}
-                            //if (String.IsNullOrEmpty(distrito))
-                            //{
-                            //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "distrito en blanco.");
-                            //    error_on_validation = true;
-                            //    //distrito = "95."; //95. SIN DEFINIR
-                            //    //distrito_completo = "95. SIN DEFINIR";
-                            //}
-                            if (String.IsNullOrEmpty(corregimiento))
-                            {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento en blanco.");
-                                error_on_validation = true;
-                                //corregimiento = "873."; //873. SIN DEFINIR
-                                //corregimiento = "873. SIN DEFINIR";
-                            }
-                            if (String.IsNullOrEmpty(direccion))
-                            {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
-                                error_on_validation = true;
-                            }
-
-                            //if (resultado_valor == "1") //para resultados positivos es obligatorio un telefono
-                            //{
-                            if (String.IsNullOrEmpty(telefono))
-                            {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
-                                error_on_validation = true;
-                            }
-                            //}
 
                             if (error_on_validation)
                             {
@@ -544,7 +482,7 @@ namespace bot_minsa.Classes
                                 driver.FindElement(By.Id("demo_-100")).SendKeys(Keys.Enter);
 
                                 //bool error_on_cedula = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si los elemntos de la página cargaron (con click en region).");
+                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si los elemntos de la página cargaron (con click en region).");
                                 for (int i = 1; i <= 5; i++)
                                 {
                                     //REGIÓN *	demo_1_value	region
@@ -617,8 +555,6 @@ namespace bot_minsa.Classes
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Elemento (región) no habilitado, seguir intentando.");
                                             recargar_pagina = true;
                                         }
-                                        //Teléfono	demo_-111	telefono
-                                        //driver.FindElement(By.Id("demo_1_value")).Clear();
                                     }
                                     else
                                     {
@@ -643,7 +579,6 @@ namespace bot_minsa.Classes
                                     recargar_pagina = true;
                                     continue;
                                 }
-
 
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si existe el paciente.");
@@ -818,6 +753,223 @@ namespace bot_minsa.Classes
                                 }
                                 #endregion
 
+                                #region validacion_adicional
+
+                                string genero_completo_aux = GetElementValueById("demo_-104_value");
+                                if (!String.IsNullOrEmpty(genero_completo_aux))
+                                {
+                                    if (genero_completo_aux == genero_completo)
+                                    {
+                                        no_tocar_fecha_nacimiento = true;
+                                    }
+                                    else
+                                    {
+                                        if (String.IsNullOrEmpty(genero_completo))
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
+                                            error_on_validation = true;
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (String.IsNullOrEmpty(genero_completo))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
+                                        error_on_validation = true;
+                                    }
+
+                                }
+
+
+                                //if (String.IsNullOrEmpty(genero_completo))
+                                //{
+                                //    genero_completo = GetElementValueById("demo_-104_value");
+                                //    if (String.IsNullOrEmpty(genero_completo))
+                                //    {
+                                //        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "genero en blanco. ");
+                                //        error_on_validation = true;
+                                //    }
+                                //    {
+                                //        no_tocar_genero = true;
+                                //    }
+                                //}
+
+                                //Fecha nacimiento *	demo_-105	fecha_nacimiento
+                                string fecha_nacimiento_aux = GetElementValueById("demo_-105");
+                                if (!String.IsNullOrEmpty(fecha_nacimiento_aux))
+                                {
+                                    if (fecha_nacimiento_aux == fecha_nacimiento)
+                                    {
+                                        no_tocar_fecha_nacimiento = true;
+                                    }
+                                    else
+                                    {
+                                        if (String.IsNullOrEmpty(fecha_nacimiento))
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha de nacimiento en blanco. ");
+                                            error_on_validation = true;
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (String.IsNullOrEmpty(fecha_nacimiento))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha de nacimiento en blanco. ");
+                                        error_on_validation = true;
+                                    }
+
+                                }
+
+
+                                //if (String.IsNullOrEmpty(fecha_nacimiento))
+                                //{
+                                //    //Fecha nacimiento *	demo_-105	fecha_nacimiento
+                                //    fecha_nacimiento = GetElementValueById("demo_-105");
+                                //    if (String.IsNullOrEmpty(fecha_nacimiento))
+                                //    {
+                                //        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_nacimiento en blanco.");
+                                //        error_on_validation = true;
+                                //    }
+                                //    else
+                                //    {
+                                //        no_tocar_fecha_nacimiento = true;
+                                //    }
+
+                                //}
+
+
+                                //if (String.IsNullOrEmpty(region))
+                                //{
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "region en blanco. ");
+                                //    error_on_validation = true;
+                                //}
+                                //if (String.IsNullOrEmpty(distrito))
+                                //{
+                                //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "distrito en blanco.");
+                                //    error_on_validation = true;
+                                //    //distrito = "95."; //95. SIN DEFINIR
+                                //    //distrito_completo = "95. SIN DEFINIR";
+                                //}
+
+                                //CORREGIMIENTO *	demo_3_value	corregimiento
+                                string corregimiento_aux = GetElementValueById("demo_3_value");
+                                //DISTRITO *	demo_2_value	distrito
+                                string distrito_aux = GetElementValueById("demo_2_value");
+                                //REGIÓN *	demo_1_value	region
+                                string region_aux = GetElementValueById("demo_1_value");
+                                if (!String.IsNullOrEmpty(corregimiento_aux) && !String.IsNullOrEmpty(distrito_aux) && !String.IsNullOrEmpty(region_aux))
+                                {
+
+                                    if (corregimiento_completo == corregimiento_aux)
+                                    {
+                                        no_tocar_demograficos = true;
+                                    }
+                                    else
+                                    {
+                                        if (String.IsNullOrEmpty(corregimiento_completo))
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento en blanco.");
+                                            error_on_validation = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (String.IsNullOrEmpty(corregimiento_completo))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento en blanco.");
+                                        error_on_validation = true;
+                                    }
+                                }
+
+                                //Dirección	demo_-112	direccion
+                                string direccion_aux = GetElementValueById("demo_-112");
+                                if (!String.IsNullOrEmpty(direccion_aux)      )
+                                {
+                                    if (direccion_aux == direccion)
+                                    {
+                                        no_tocar_direcion = true;
+                                    }
+                                    else
+                                    {
+                                        if (String.IsNullOrEmpty(direccion))
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
+                                            error_on_validation = true;
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (String.IsNullOrEmpty(direccion))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
+                                        error_on_validation = true;
+                                    }
+
+                                }
+
+                                //Teléfono	demo_-111	telefono
+                                string telefono_aux = GetElementValueById("demo_-111");
+                                if (!String.IsNullOrEmpty(telefono_aux))
+                                {
+                                    if (telefono_aux == telefono)
+                                    {
+                                        no_tocar_telefono = true;
+                                    }
+                                    else
+                                    {
+                                        if (String.IsNullOrEmpty(telefono))
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
+                                            error_on_validation = true;
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (String.IsNullOrEmpty(telefono))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
+                                        error_on_validation = true;
+                                    }
+
+                                }
+
+                                ////if (resultado_valor == "1") //para resultados positivos es obligatorio un telefono
+                                ////{
+                                //if (String.IsNullOrEmpty(telefono))
+                                //{
+                                //    //Teléfono	demo_-111	telefono
+                                //    telefono = GetElementValueById("demo_-111");
+                                //    if (String.IsNullOrEmpty(telefono))
+                                //    {
+                                //        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
+                                //        error_on_validation = true;
+                                //    }
+                                //    else
+                                //    {
+                                //        no_tocar_telefono = true;
+                                //    }
+                                //}
+                                //}
+                                if (error_on_validation)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Hay errores en validacion adicional para este estudio, no se puede reportar.  ");
+
+                                    //try to update 'laboratorio' to manual report because error_on_validation==true
+                                    update_labcore_order(l_id, "3");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Pasando a la siguiente orden. ");
+                                    continue; //next for 
+                                }
+
+                                #endregion
 
 
                                 #region ingreso_de_datos
@@ -859,379 +1011,389 @@ namespace bot_minsa.Classes
                                     driver.FindElement(By.Id("demo_-109")).Clear();
                                     //driver.FindElement(By.Id("demo_-109")).Clear();
                                     System.Threading.Thread.Sleep(300);
-
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en genero.");
-                                    bool error_on_sex = false;
-                                    for (int i = 0; i < 4; i++)
+                                    if (!no_tocar_genero)
                                     {
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Intentar registrar el género.");
-                                        //Género *	demo_-104_value	genero
-                                        driver.FindElement(By.Id("demo_-104_value")).Click();
-                                        driver.FindElement(By.Id("demo_-104_value")).Clear();
-                                        driver.FindElement(By.Id("demo_-104_value")).SendKeys(genero_completo);
-                                        System.Threading.Thread.Sleep(i * 200 + 1000);
-                                        driver.FindElement(By.Id("demo_-104_value")).SendKeys(Keys.Tab);
-                                        System.Threading.Thread.Sleep(300);
+                                        if (genero_completo != GetElementValueById("demo_-104_value"))
+                                        {
 
-                                        string genero_minsa_aux = driver.FindElement(By.Id("demo_-104_value")).GetAttribute("value").Trim();
-                                        if (String.IsNullOrEmpty(genero_minsa_aux))
-                                        {
-                                            error_on_sex = true;
-                                        }
-                                        else
-                                        {
-                                            error_on_sex = false;
-                                            break;
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en genero.");
+                                            bool error_on_sex = false;
+                                            for (int i = 0; i < 4; i++)
+                                            {
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Intentar registrar el género.");
+                                                //Género *	demo_-104_value	genero
+                                                driver.FindElement(By.Id("demo_-104_value")).Click();
+                                                driver.FindElement(By.Id("demo_-104_value")).Clear();
+                                                driver.FindElement(By.Id("demo_-104_value")).SendKeys(genero_completo);
+                                                System.Threading.Thread.Sleep(i * 200 + 1000);
+                                                driver.FindElement(By.Id("demo_-104_value")).SendKeys(Keys.Tab);
+                                                System.Threading.Thread.Sleep(300);
+
+                                                string genero_minsa_aux = driver.FindElement(By.Id("demo_-104_value")).GetAttribute("value").Trim();
+                                                if (String.IsNullOrEmpty(genero_minsa_aux))
+                                                {
+                                                    error_on_sex = true;
+                                                }
+                                                else
+                                                {
+                                                    error_on_sex = false;
+                                                    break;
+                                                }
+                                            }
+                                            if (error_on_sex)
+                                            {
+                                                recargar_pagina = true;
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error al registrar el género.");
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Pasando al siguiente registro.");
+                                                continue;
+                                            }
                                         }
                                     }
-                                    if (error_on_sex)
-                                    {
-                                        recargar_pagina = true;
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Error al registrar el género.");
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Pasando al siguiente registro.");
-                                        continue;
-                                    }
 
 
-                                    ////Género *	demo_-104_value	genero
-                                    //driver.FindElement(By.Id("demo_-104_value")).Click();
-                                    //driver.FindElement(By.Id("demo_-104_value")).Clear();
-                                    //driver.FindElement(By.Id("demo_-104_value")).SendKeys(genero_completo);
-                                    //System.Threading.Thread.Sleep(1500);
-                                    //driver.FindElement(By.Id("demo_-104_value")).SendKeys(Keys.Enter);
-                                    //System.Threading.Thread.Sleep(300);
                                 }//if (!paciente_existe)
 
-
-                                /////////    FECHA_NACIMIENTO
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en fecha_nacimiento.");
-                                //Fecha nacimiento *	demo_-105	fecha_nacimiento
-                                driver.FindElement(By.Id("demo_-105")).Click();
-                                driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
-                                driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
-                                System.Threading.Thread.Sleep(300);
-                                driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
-                                //System.Threading.Thread.Sleep(300);
-
-
-                                //******************
-
-                                bool fec_nac_valido = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar fecha de nacimiento.");
-                                for (int i = 1; i <= 5; i++)
+                                if (!no_tocar_fecha_nacimiento)
                                 {
-                                    //REGIÓN *	demo_1_value	region
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    System.Threading.Thread.Sleep(i * 500);
-
-                                    //***********************************************************
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta la fecha de nacimiento");
-                                    IWebElement fecha_nacimiento_val = null;
-                                    bool existe_fecha_nac = TryFindElement(By.Id("demo_-105"), out fecha_nacimiento_val);
-                                    //existe_formato_no_valido = TryFindElement(By.XPath("//*[contains(., 'Formato no válido')]"), out formato_no_valido);
-
-                                    //driver.FindElement(By.XPath("//*[contains(., 'Formato no válido')]"));
-                                    if (existe_fecha_nac)
+                                    if (fecha_nacimiento != GetElementValueById("demo_-105"))
                                     {
-                                        try
+
+                                        /////////    FECHA_NACIMIENTO
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en fecha_nacimiento.");
+                                        //Fecha nacimiento *	demo_-105	fecha_nacimiento
+                                        driver.FindElement(By.Id("demo_-105")).Click();
+                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                        System.Threading.Thread.Sleep(300);
+                                        driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
+                                        //System.Threading.Thread.Sleep(300);
+
+
+                                        //******************
+
+                                        bool fec_nac_valido = false;
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar fecha de nacimiento.");
+                                        for (int i = 1; i <= 5; i++)
                                         {
+                                            //REGIÓN *	demo_1_value	region
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                            System.Threading.Thread.Sleep(i * 500);
 
-                                            DateTime Temp;
-                                            string fecha_nacimiento_val_value = fecha_nacimiento_val.GetAttribute("value");
-                                            if (DateTime.TryParse(fecha_nacimiento_val_value, out Temp) == true)
-                                            {
-                                                fec_nac_valido = true;
-                                            }
-                                            else
-                                            {
-                                                fec_nac_valido = false;
-                                            }
-                                            if (fec_nac_valido)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Fecha de nacimiento correcta.");
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en formato de fecha de nacimiento.");
-                                                driver.FindElement(By.Id("demo_-105")).Click();
-                                                driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
-                                                System.Threading.Thread.Sleep(300);
-                                                driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
-                                                System.Threading.Thread.Sleep(300);
-                                                driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
-                                                System.Threading.Thread.Sleep(300);
-                                            }
+                                            //***********************************************************
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta la fecha de nacimiento");
+                                            IWebElement fecha_nacimiento_val = null;
+                                            bool existe_fecha_nac = TryFindElement(By.Id("demo_-105"), out fecha_nacimiento_val);
+                                            //existe_formato_no_valido = TryFindElement(By.XPath("//*[contains(., 'Formato no válido')]"), out formato_no_valido);
 
+                                            //driver.FindElement(By.XPath("//*[contains(., 'Formato no válido')]"));
+                                            if (existe_fecha_nac)
+                                            {
+                                                try
+                                                {
+
+                                                    DateTime Temp;
+                                                    string fecha_nacimiento_val_value = fecha_nacimiento_val.GetAttribute("value");
+                                                    if (DateTime.TryParse(fecha_nacimiento_val_value, out Temp) == true)
+                                                    {
+                                                        fec_nac_valido = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        fec_nac_valido = false;
+                                                    }
+                                                    if (fec_nac_valido)
+                                                    {
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Fecha de nacimiento correcta.");
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en formato de fecha de nacimiento.");
+                                                        driver.FindElement(By.Id("demo_-105")).Click();
+                                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                                        System.Threading.Thread.Sleep(300);
+                                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                                        System.Threading.Thread.Sleep(300);
+                                                        driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
+                                                        System.Threading.Thread.Sleep(300);
+                                                    }
+
+                                                }
+                                                catch (Exception)
+                                                {
+
+                                                }
+
+                                            }
                                         }
-                                        catch (Exception)
+
+                                        if (!fec_nac_valido)
                                         {
-
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Fecha de nacimiento con formato inválido, requiere REGISTRO MANUAL.");
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                            update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                            recargar_pagina = true;
+                                            continue;
                                         }
-
                                     }
                                 }
-
-                                if (!fec_nac_valido)
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Fecha de nacimiento con formato inválido, requiere REGISTRO MANUAL.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
-                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
-                                    recargar_pagina = true;
-                                    continue;
-                                }
-
                                 ///  FIN    FECHA_NACIMIENTO
                                 //***********************************************************
 
 
                                 //******************
-
-
-
-
-
-
-                                //////////////          REGION
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en region.");
-                                region = region_completo;
-                                //REGIÓN *	demo_1_value	region
-                                driver.FindElement(By.Id("demo_1_value")).Clear();
-                                driver.FindElement(By.Id("demo_1_value")).Click();
-                                driver.FindElement(By.Id("demo_1_value")).SendKeys(region);
-                                System.Threading.Thread.Sleep(1200);
-                                driver.FindElement(By.Id("demo_1_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(200);
-
-                                //******************
-
-                                bool region_valido = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar region.");
-                                for (int i = 1; i <= 3; i++)
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    //System.Threading.Thread.Sleep(i * 2000);
-
-                                    //***********************************************************
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta la region");
-                                    IWebElement region_val = null;
-                                    bool existe_region = TryFindElement(By.Id("demo_1_value"), out region_val);
-
-                                    if (existe_region)
-                                    {
-                                        try
-                                        {
-                                            string region_val_value = region_val.GetAttribute("value");
-                                            if (!string.IsNullOrEmpty(region_val_value))
-                                            {
-                                                region_valido = true;
-                                            }
-                                            else
-                                            {
-                                                region_valido = false;
-                                            }
-                                            if (region_valido)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Región correcta.");
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de Región.");
-                                                driver.FindElement(By.Id("demo_1_value")).Clear();
-                                                driver.FindElement(By.Id("demo_1_value")).Click();
-                                                driver.FindElement(By.Id("demo_1_value")).SendKeys(region);
-                                                System.Threading.Thread.Sleep(i * 1500);
-                                                driver.FindElement(By.Id("demo_1_value")).SendKeys(Keys.Enter);
-                                                System.Threading.Thread.Sleep(200);
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-                                    }
-                                }
-
-                                if (!region_valido)
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Región con formato inválido, requiere REGISTRO MANUAL.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
-                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
-                                    recargar_pagina = true;
-                                    continue;
-                                }
-                                //FIN REGION
-                                //***********************************************************
-
-
-
-                                //////////////          DISTRITO
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en distrito.");
-                                distrito = distrito_completo;
-                                //DISTRITO *	demo_2_value	distrito
-                                driver.FindElement(By.Id("demo_2_value")).Clear();
-                                driver.FindElement(By.Id("demo_2_value")).Click();
-                                driver.FindElement(By.Id("demo_2_value")).SendKeys(distrito);
-                                System.Threading.Thread.Sleep(1200);
-                                driver.FindElement(By.Id("demo_2_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(200);
-
-                                //******************
-
-                                bool distrito_valido = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar distrito.");
-                                for (int i = 1; i <= 3; i++)
+                                if (!no_tocar_demograficos)
                                 {
 
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    //System.Threading.Thread.Sleep(i * 2000);
-
-                                    //***********************************************************
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el distrito");
-                                    IWebElement distrito_val = null;
-                                    bool existe_distrito = TryFindElement(By.Id("demo_2_value"), out distrito_val);
-
-                                    if (existe_distrito)
-                                    {
-                                        try
-                                        {
-                                            string distrito_val_value = distrito_val.GetAttribute("value");
-                                            if (!string.IsNullOrEmpty(distrito_val_value))
-                                            {
-                                                distrito_valido = true;
-                                            }
-                                            else
-                                            {
-                                                distrito_valido = false;
-                                            }
-                                            if (distrito_valido)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Distrito correcto.");
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de distrito.");
-                                                driver.FindElement(By.Id("demo_2_value")).Clear();
-                                                driver.FindElement(By.Id("demo_2_value")).Click();
-                                                driver.FindElement(By.Id("demo_2_value")).SendKeys(distrito);
-                                                System.Threading.Thread.Sleep(i * 1500);
-                                                driver.FindElement(By.Id("demo_2_value")).SendKeys(Keys.Enter);
-                                                System.Threading.Thread.Sleep(200);
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-
-                                    }
-                                }
-
-                                if (!distrito_valido)
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Distrito con formato inválido, requiere REGISTRO MANUAL.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
-                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
-                                    recargar_pagina = true;
-                                    continue;
-                                }
-                                //FIN DISTRITO
-                                //***********************************************************
-
-
-
-                                //////////////          CORREGIMIENTO
-                                //string[] words = corregimiento_completo.Split('.');
-                                //corregimiento = words[1].Trim();
-                                corregimiento = corregimiento_completo;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en corregimiento.");
-                                //CORREGIMIENTO *	demo_3_value	corregimiento
-                                driver.FindElement(By.Id("demo_3_value")).Clear();
-                                driver.FindElement(By.Id("demo_3_value")).Click();
-                                driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
-                                System.Threading.Thread.Sleep(1200);
-                                driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
-                                System.Threading.Thread.Sleep(200);
-
-                                //******************
-
-                                bool corregimiento_valido = false;
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar Corregimiento.");
-                                for (int i = 1; i <= 3; i++)
-                                {
-
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
-                                    //System.Threading.Thread.Sleep(i * 2000);
-
-                                    //***********************************************************
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el corregimiento");
-                                    IWebElement corregimiento_val = null;
-                                    bool existe_corregimiento = TryFindElement(By.Id("demo_3_value"), out corregimiento_val);
-
-                                    if (existe_corregimiento)
-                                    {
-                                        try
-                                        {
-                                            string corregimiento_val_value = corregimiento_val.GetAttribute("value");
-                                            if (!string.IsNullOrEmpty(corregimiento_val_value))
-                                            {
-                                                corregimiento_valido = true;
-                                            }
-                                            else
-                                            {
-                                                corregimiento_valido = false;
-                                            }
-                                            if (corregimiento_valido)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Corregimiento correcto.");
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de corregimiento.");
-                                                driver.FindElement(By.Id("demo_3_value")).Clear();
-                                                driver.FindElement(By.Id("demo_3_value")).Click();
-                                                driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
-                                                System.Threading.Thread.Sleep(i * 1500);
-                                                driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
-                                                System.Threading.Thread.Sleep(200);
-                                            }
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-
-                                    }
-                                }
-
-                                if (!corregimiento_valido)
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Corregimiento con formato inválido, requiere REGISTRO MANUAL.");
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
-                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
-                                    recargar_pagina = true;
-                                    continue;
-                                }
-                                //FIN CORREGIMIENTO
-                                //***********************************************************
-
-
-
-
-
-                                if (!String.IsNullOrEmpty(direccion))
-                                {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en direccion.");
-                                    //Dirección	demo_-112	direccion
-                                    driver.FindElement(By.Id("demo_-112")).Clear();
-                                    driver.FindElement(By.Id("demo_-112")).SendKeys(direccion + Keys.Enter);
+                                    //////////////          REGION
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en region.");
+                                    region = region_completo;
+                                    //REGIÓN *	demo_1_value	region
+                                    driver.FindElement(By.Id("demo_1_value")).Clear();
+                                    driver.FindElement(By.Id("demo_1_value")).Click();
+                                    driver.FindElement(By.Id("demo_1_value")).SendKeys(region);
+                                    System.Threading.Thread.Sleep(1200);
+                                    driver.FindElement(By.Id("demo_1_value")).SendKeys(Keys.Enter);
                                     System.Threading.Thread.Sleep(200);
+
+                                    //******************
+
+                                    bool region_valido = false;
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar region.");
+                                    for (int i = 1; i <= 3; i++)
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                        //System.Threading.Thread.Sleep(i * 2000);
+
+                                        //***********************************************************
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta la region");
+                                        IWebElement region_val = null;
+                                        bool existe_region = TryFindElement(By.Id("demo_1_value"), out region_val);
+
+                                        if (existe_region)
+                                        {
+                                            try
+                                            {
+                                                string region_val_value = region_val.GetAttribute("value");
+                                                if (!string.IsNullOrEmpty(region_val_value))
+                                                {
+                                                    region_valido = true;
+                                                }
+                                                else
+                                                {
+                                                    region_valido = false;
+                                                }
+                                                if (region_valido)
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Región correcta.");
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de Región.");
+                                                    driver.FindElement(By.Id("demo_1_value")).Clear();
+                                                    driver.FindElement(By.Id("demo_1_value")).Click();
+                                                    driver.FindElement(By.Id("demo_1_value")).SendKeys(region);
+                                                    System.Threading.Thread.Sleep(i * 1500);
+                                                    driver.FindElement(By.Id("demo_1_value")).SendKeys(Keys.Enter);
+                                                    System.Threading.Thread.Sleep(200);
+                                                }
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                            }
+                                        }
+                                    }
+
+                                    if (!region_valido)
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Región con formato inválido, requiere REGISTRO MANUAL.");
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                        update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                        recargar_pagina = true;
+                                        continue;
+                                    }
+                                    //FIN REGION
+                                    //***********************************************************
+
+
+
+                                    //////////////          DISTRITO
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en distrito.");
+                                    distrito = distrito_completo;
+                                    //DISTRITO *	demo_2_value	distrito
+                                    driver.FindElement(By.Id("demo_2_value")).Clear();
+                                    driver.FindElement(By.Id("demo_2_value")).Click();
+                                    driver.FindElement(By.Id("demo_2_value")).SendKeys(distrito);
+                                    System.Threading.Thread.Sleep(1200);
+                                    driver.FindElement(By.Id("demo_2_value")).SendKeys(Keys.Enter);
+                                    System.Threading.Thread.Sleep(200);
+
+                                    //******************
+
+                                    bool distrito_valido = false;
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar distrito.");
+                                    for (int i = 1; i <= 3; i++)
+                                    {
+
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                        //System.Threading.Thread.Sleep(i * 2000);
+
+                                        //***********************************************************
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el distrito");
+                                        IWebElement distrito_val = null;
+                                        bool existe_distrito = TryFindElement(By.Id("demo_2_value"), out distrito_val);
+
+                                        if (existe_distrito)
+                                        {
+                                            try
+                                            {
+                                                string distrito_val_value = distrito_val.GetAttribute("value");
+                                                if (!string.IsNullOrEmpty(distrito_val_value))
+                                                {
+                                                    distrito_valido = true;
+                                                }
+                                                else
+                                                {
+                                                    distrito_valido = false;
+                                                }
+                                                if (distrito_valido)
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Distrito correcto.");
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de distrito.");
+                                                    driver.FindElement(By.Id("demo_2_value")).Clear();
+                                                    driver.FindElement(By.Id("demo_2_value")).Click();
+                                                    driver.FindElement(By.Id("demo_2_value")).SendKeys(distrito);
+                                                    System.Threading.Thread.Sleep(i * 1500);
+                                                    driver.FindElement(By.Id("demo_2_value")).SendKeys(Keys.Enter);
+                                                    System.Threading.Thread.Sleep(200);
+                                                }
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                            }
+
+                                        }
+                                    }
+
+                                    if (!distrito_valido)
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Distrito con formato inválido, requiere REGISTRO MANUAL.");
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                        update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                        recargar_pagina = true;
+                                        continue;
+                                    }
+                                    //FIN DISTRITO
+                                    //***********************************************************
+
+
+
+                                    //////////////          CORREGIMIENTO
+                                    //string[] words = corregimiento_completo.Split('.');
+                                    //corregimiento = words[1].Trim();
+                                    corregimiento = corregimiento_completo;
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en corregimiento.");
+                                    //CORREGIMIENTO *	demo_3_value	corregimiento
+                                    driver.FindElement(By.Id("demo_3_value")).Clear();
+                                    driver.FindElement(By.Id("demo_3_value")).Click();
+                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
+                                    System.Threading.Thread.Sleep(1200);
+                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
+                                    System.Threading.Thread.Sleep(200);
+
+                                    //******************
+
+                                    bool corregimiento_valido = false;
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar Corregimiento.");
+                                    for (int i = 1; i <= 3; i++)
+                                    {
+
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                        //System.Threading.Thread.Sleep(i * 2000);
+
+                                        //***********************************************************
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta el corregimiento");
+                                        IWebElement corregimiento_val = null;
+                                        bool existe_corregimiento = TryFindElement(By.Id("demo_3_value"), out corregimiento_val);
+
+                                        if (existe_corregimiento)
+                                        {
+                                            try
+                                            {
+                                                string corregimiento_val_value = corregimiento_val.GetAttribute("value");
+                                                if (!string.IsNullOrEmpty(corregimiento_val_value))
+                                                {
+                                                    corregimiento_valido = true;
+                                                }
+                                                else
+                                                {
+                                                    corregimiento_valido = false;
+                                                }
+                                                if (corregimiento_valido)
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Corregimiento correcto.");
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de corregimiento.");
+                                                    driver.FindElement(By.Id("demo_3_value")).Clear();
+                                                    driver.FindElement(By.Id("demo_3_value")).Click();
+                                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
+                                                    System.Threading.Thread.Sleep(i * 1500);
+                                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
+                                                    System.Threading.Thread.Sleep(200);
+                                                }
+                                            }
+                                            catch (Exception)
+                                            {
+
+                                            }
+
+                                        }
+                                    }
+
+                                    if (!corregimiento_valido)
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Corregimiento con formato inválido, requiere REGISTRO MANUAL.");
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                        update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                        recargar_pagina = true;
+                                        continue;
+                                    }
+                                    //FIN CORREGIMIENTO
+                                    //***********************************************************
+
+                                } //fin no tocar demograficos
+
+
+
+
+
+                                if (!no_tocar_direcion)
+                                {
+                                    if (direccion != GetElementValueById("demo_-112"))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en direccion.");
+                                        //Dirección	demo_-112	direccion
+                                        driver.FindElement(By.Id("demo_-112")).Clear();
+                                        driver.FindElement(By.Id("demo_-112")).SendKeys(direccion + Keys.Enter);
+                                        System.Threading.Thread.Sleep(200);
+                                    }
+
                                 }
+
+
                                 //PERSONA CONTACTO	demo_5	persona_contacto
                                 //TELÉFONO CONTACTO	demo_6	telefono_contacto
+
 
                                 //correo ELECTRONICO
                                 if (!String.IsNullOrEmpty(correo))
@@ -1838,7 +2000,7 @@ namespace bot_minsa.Classes
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
                                     //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
                                     bool error_al_guardar = false;
-                                    for (int i = 1; i <= 3; i++)
+                                    for (int i = 1; i <= 6; i++)
                                     {
 
                                         //validar si aparece el boton de seguro si desea guardar?
@@ -2018,6 +2180,35 @@ namespace bot_minsa.Classes
 
         }
         //end public void start_Process()
+
+        //obtener valor por 
+
+        public string GetElementValueById(string ById)
+        {
+            string element_value = "";
+
+
+            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "obtener valor del elemento (By.Id): " + ById);
+            IWebElement element = null;
+            bool exist_element = TryFindElement(By.Id(ById), out element);
+
+            if (exist_element)
+            {
+                try
+                {
+                    element_value = element.GetAttribute("value");
+                }
+                catch (Exception)
+                {
+                    element_value = "";
+                }
+
+            }
+            return element_value;
+
+        }
+
+
 
         private static void SqlExecuteNonQuery(string queryString, string connectionString)
         {
