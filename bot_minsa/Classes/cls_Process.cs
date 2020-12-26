@@ -938,7 +938,8 @@ namespace bot_minsa.Classes
                                         if (String.IsNullOrEmpty(corregimiento_completo))
                                         {
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento en blanco.");
-                                            error_on_validation = true;
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "corregimiento de minsa disponible.");
+                                            //error_on_validation = true;
                                         }
                                     }
                                 }
