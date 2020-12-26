@@ -321,8 +321,8 @@ namespace bot_minsa.Classes
                             string corregimiento = oRow["corregimiento"].ToString();
                             string corregimiento_completo = oRow["corregimiento_completo"].ToString();
                             string direccion = oRow["direccion"].ToString().Trim();
-                            string persona_contacto = oRow["persona_contacto"].ToString();
-                            string telefono_contacto = oRow["telefono_contacto"].ToString();
+                            //string persona_contacto = oRow["persona_contacto"].ToString();
+                            //string telefono_contacto = oRow["telefono_contacto"].ToString();
                             string correo = oRow["correo"].ToString();
                             string telefono = oRow["telefono"].ToString().Replace("+507", "").Trim();
                             string tipo_de_orden = oRow["tipo_de_orden"].ToString();
@@ -1082,6 +1082,7 @@ namespace bot_minsa.Classes
                                     //try to update 'laboratorio' to manual report because error_on_validation==true
                                     update_labcore_order(l_id, "3");
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Pasando a la siguiente orden. ");
+                                    recargar_pagina = true;
                                     continue; //next for 
                                 }
 
