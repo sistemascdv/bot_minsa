@@ -47,7 +47,7 @@ namespace bot_minsa.Classes
         //FirefoxDriver driver = new FirefoxDriver();
 
         public static IWebDriver driver = new FirefoxDriver();
-         
+
         //// Wrapping parent driver             
         //EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(driver);
 
@@ -56,10 +56,10 @@ namespace bot_minsa.Classes
         //eventFiringWebDriver
         //eventFiringWebDriver.ElementClicking += EventFiringWebDriver_ElementClicking;
 
-////Click events
-//// Attaching click events             
-//eventFiringWebDriver.ElementClicking += EventFiringWebDriver_ElementClicking; 
-//eventFiringWebDriver.ElementClicked += EventFiringWebDriver_ElementClicked; 
+        ////Click events
+        //// Attaching click events             
+        //eventFiringWebDriver.ElementClicking += EventFiringWebDriver_ElementClicking; 
+        //eventFiringWebDriver.ElementClicked += EventFiringWebDriver_ElementClicked; 
 
 
 
@@ -116,7 +116,7 @@ namespace bot_minsa.Classes
             // Element finding events             
             //eventFiringWebDriver.FindingElement += EventFiringWebDriver_FindingElement;
             //eventFiringWebDriver.FindElementCompleted += EventFiringWebDriver_FindElementCompleted;
-           
+
 
             #region MINSA
 
@@ -471,7 +471,7 @@ namespace bot_minsa.Classes
                                 //driver.FindElement(By.Id("demo_-10_value")).Click();
                                 //driver.FindElement(By.Id("demo_-10_value")).SendKeys(tipo_documento + Keys.Enter);
                                 int cedula_formato_intento = 1;
-                                CedulaFormato:
+                            CedulaFormato:
 
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Buscando campo 'tipo de documento'. ");
                                 var campo_tipo_documento = driver.FindElement(By.Id("demo_-10_value"));
@@ -567,7 +567,7 @@ namespace bot_minsa.Classes
                                                     recargar_pagina = true;
                                                     break;
                                                 }
-                                                
+
                                             }
 
                                         }
@@ -628,7 +628,7 @@ namespace bot_minsa.Classes
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro. (se intentará de nuevo)");
                                     update_labcore_try(l_id); //se añade un intento
                                     continue;
-                                    
+
                                 }
 
                                 IWebElement formato_invalido_label = null;
@@ -965,9 +965,19 @@ namespace bot_minsa.Classes
                                     {
                                         if (String.IsNullOrEmpty(direccion))
                                         {
-                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
-                                            //error_on_validation = true;
-                                            direccion = corregimiento;
+                                            if (String.IsNullOrEmpty(direccion_aux))
+                                            {
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
+                                                error_on_validation = true;
+
+                                            }
+                                            else
+                                            {
+                                                no_tocar_direcion = true;
+                                            }
+
+
+                                            //direccion = corregimiento;
                                         }
                                     }
 
@@ -977,8 +987,8 @@ namespace bot_minsa.Classes
                                     if (String.IsNullOrEmpty(direccion))
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "direccion en blanco. ");
-                                        //error_on_validation = true;
-                                        direccion = corregimiento;
+                                        error_on_validation = true;
+                                        //direccion = corregimiento;
                                     }
 
                                 }
@@ -996,8 +1006,8 @@ namespace bot_minsa.Classes
                                         if (String.IsNullOrEmpty(telefono))
                                         {
                                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
-                                            //error_on_validation = true;
-                                            telefono = "No aportó";
+                                            error_on_validation = true;
+                                            //telefono = "No aportó";
                                         }
                                     }
 
@@ -1007,8 +1017,8 @@ namespace bot_minsa.Classes
                                     if (String.IsNullOrEmpty(telefono))
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "telefono en blanco. ");
-                                        //error_on_validation = true;
-                                        telefono = "No aportó";
+                                        error_on_validation = true;
+                                        //telefono = "No aportó";
                                     }
 
                                 }
@@ -2213,8 +2223,8 @@ namespace bot_minsa.Classes
                                                 button_guardar.Click();
 
                                                 //buscar si es repetida
-                                                System.Threading.Thread.Sleep(500*i);
-                                                 div_repetido = null;
+                                                System.Threading.Thread.Sleep(500 * i);
+                                                div_repetido = null;
                                                 if (TryFindElement(By.XPath("//div[contains(text(), 'El externalId ya existe en la base de datos')]"), out div_repetido))
                                                 {
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
@@ -2225,11 +2235,11 @@ namespace bot_minsa.Classes
                                             }
                                             catch (Exception)
                                             {
- 
+
                                             }
                                         }
                                     }
-                                   RegistroRepetido:
+                                RegistroRepetido:
 
                                     if (error_al_guardar)
                                     {
@@ -2259,7 +2269,7 @@ namespace bot_minsa.Classes
                                             }
                                             else
                                             {
-                                                
+
                                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Botón deshacer no esta habilitado. ");
                                                 recargar_pagina = true;
                                             }
@@ -2268,10 +2278,10 @@ namespace bot_minsa.Classes
                                     else
                                     {
                                         //no hubo error se registra como enviado al minsa.
-                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Datos registrados. ");
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Datos registrados. ");
                                         if (!repetido_guardado)
                                         {
-                                           
+
                                             update_labcore_order(l_id, "1");//esta orden se guarda como nueva
                                         }
                                         else
