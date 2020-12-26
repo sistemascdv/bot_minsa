@@ -2131,6 +2131,7 @@ namespace bot_minsa.Classes
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
                                         error_al_guardar = false;
                                         repetido_guardado = true;
+                                        goto RegistroRepetido;
                                     }
 
                                     if (!repetido_guardado)
@@ -2165,7 +2166,8 @@ namespace bot_minsa.Classes
                                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
                                                         error_al_guardar = false;
                                                         repetido_guardado = true;
-                                                        break;
+                                                        goto RegistroRepetido;
+                                                        //break;
                                                     }
 
                                                 }
@@ -2214,6 +2216,7 @@ namespace bot_minsa.Classes
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
                                                     error_al_guardar = false;
                                                     repetido_guardado = true;
+                                                    goto RegistroRepetido;
                                                 }
                                             }
                                             catch (Exception)
@@ -2222,7 +2225,7 @@ namespace bot_minsa.Classes
                                             }
                                         }
                                     }
-                                   
+                                   RegistroRepetido:
 
                                     if (error_al_guardar)
                                     {
