@@ -368,6 +368,7 @@ namespace bot_minsa.Classes
 
                                 //try to update 'laboratorio' to manual report because error_on_validation==true
                                 update_labcore_order(l_id, "3");
+                                update_labcore_try(l_id); //se añade un intento
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Pasando a la siguiente orden. ");
                                 continue; //next for 
                             }
@@ -637,7 +638,9 @@ namespace bot_minsa.Classes
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Cédula con formato inválido, requiere REGISTRO MANUAL.");
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
                                     update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+
                                     recargar_pagina = true;
+
                                     continue;
                                 }
 
