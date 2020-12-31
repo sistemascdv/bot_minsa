@@ -2246,7 +2246,8 @@ namespace bot_minsa.Classes
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "No he habilitó el botón nuevo, se colocará este registro para REVISIÓN MANUAL");
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Puede tratarse de registro duplicado o la página tardó mucho en responder.");
-                                        update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                        //update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                        update_labcore_try(l_id);
 
                                         //intertar click en boton deshacer
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Buscar si está activo el botón 'deshacer'");
