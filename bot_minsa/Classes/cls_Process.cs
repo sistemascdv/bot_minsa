@@ -246,7 +246,7 @@ namespace bot_minsa.Classes
                                 recargar_pagina = false;
                                 pagina_cargada = false;
                                 //driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
-                                for (int i = 1; i <= 1160; i++)
+                                for (int i = 1; i <= 10; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                                     //if (i == 1)
@@ -750,71 +750,71 @@ namespace bot_minsa.Classes
                                     string comentario_de_la_orden = "";
                                     paciente_existe = true;
 
-                                    //evauar nombre 1
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si primer nombre de labcore es diferente de primer nombre de minsa.");
-                                    //Primer nombre *	demo_-103	primer_nombre
-                                    string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().Split(' ');
-                                    string primer_nombre_minsa = primer_nombre_values[0];
+                                    ////evauar nombre 1
+                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si primer nombre de labcore es diferente de primer nombre de minsa.");
+                                    ////Primer nombre *	demo_-103	primer_nombre
+                                    //string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().Split(' ');
+                                    //string primer_nombre_minsa = primer_nombre_values[0];
 
-                                    if (primer_nombre != primer_nombre_minsa)
-                                    {
-                                        comentario_de_la_orden = "PACIENTE: " + primer_nombre + " " + primer_apellido + "." + Keys.Enter;
-                                    }
-
-                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si fecha nacimiento de labcore es diferente de fecha nacimiento de minsa.");
-                                    ////evaluar fecha nacimiento
-                                    //string fecha_nacimiento_value = driver.FindElement(By.Id("demo_-105")).GetAttribute("value").Trim();
-                                    //if (fecha_nacimiento != fecha_nacimiento_value)
+                                    //if (primer_nombre != primer_nombre_minsa)
                                     //{
-                                    //    comentario_de_la_orden += "FECHA NACIMIENTO: " + fecha_nacimiento + "." + Keys.Enter;
+                                    //    comentario_de_la_orden = "PACIENTE: " + primer_nombre + " " + primer_apellido + "." + Keys.Enter;
                                     //}
-                                    if (!String.IsNullOrEmpty(comentario_de_la_orden))
-                                    {
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en comentario_de_la_orden: " + comentario_de_la_orden);
-                                        IWebElement commentario_box = null;
-                                        bool commentario = TryFindElement(By.XPath("//*[@ng-model='commentorder.notes[0].commentArray.content']"), out commentario_box);
-                                        if (commentario)
-                                        {
-                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Comentario textbox 'ng-model='commentorder.notes[0].commentArray.content' existe.");
-                                        }
-                                        else
-                                        {
-                                            commentario = TryFindElement(By.Id("ui-tinymce-6"), out commentario_box);
-                                            if (commentario)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Comentario textbox 'ui-tinymce-6' existe.");
-                                            }
-                                            else
-                                            {
-                                                commentario = TryFindElement(By.Id("ui-tinymce-12"), out commentario_box);
-                                                if (commentario)
-                                                {
-                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Comentario textbox 'ui-tinymce-12' existe.");
-                                                }
-                                            }
-                                        }
-                                        if (commentario)
-                                        {
-                                            try
-                                            {
-                                                //en caso de no coincidir el nombre añadir nota
-                                                //Comentario de la orden	ui-tinymce-6	comentario_de_la_orden
-                                                commentario_box.Click();
-                                                commentario_box.Clear();
-                                                commentario_box.SendKeys(comentario_de_la_orden);
-                                                System.Threading.Thread.Sleep(800);
-                                            }
-                                            catch (Exception)
-                                            {
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "****Error al añadir el comentario.");
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "***No se pudo añadir el comentario.");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Comentario textbox no hallado.");
-                                        }
-                                    }
+
+                                    ////Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si fecha nacimiento de labcore es diferente de fecha nacimiento de minsa.");
+                                    //////evaluar fecha nacimiento
+                                    ////string fecha_nacimiento_value = driver.FindElement(By.Id("demo_-105")).GetAttribute("value").Trim();
+                                    ////if (fecha_nacimiento != fecha_nacimiento_value)
+                                    ////{
+                                    ////    comentario_de_la_orden += "FECHA NACIMIENTO: " + fecha_nacimiento + "." + Keys.Enter;
+                                    ////}
+                                    //if (!String.IsNullOrEmpty(comentario_de_la_orden))
+                                    //{
+                                    //    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Click en comentario_de_la_orden: " + comentario_de_la_orden);
+                                    //    IWebElement commentario_box = null;
+                                    //    bool commentario = TryFindElement(By.XPath("//*[@ng-model='commentorder.notes[0].commentArray.content']"), out commentario_box);
+                                    //    if (commentario)
+                                    //    {
+                                    //        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Comentario textbox 'ng-model='commentorder.notes[0].commentArray.content' existe.");
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        commentario = TryFindElement(By.Id("ui-tinymce-6"), out commentario_box);
+                                    //        if (commentario)
+                                    //        {
+                                    //            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Comentario textbox 'ui-tinymce-6' existe.");
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            commentario = TryFindElement(By.Id("ui-tinymce-12"), out commentario_box);
+                                    //            if (commentario)
+                                    //            {
+                                    //                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Comentario textbox 'ui-tinymce-12' existe.");
+                                    //            }
+                                    //        }
+                                    //    }
+                                    //    if (commentario)
+                                    //    {
+                                    //        try
+                                    //        {
+                                    //            //en caso de no coincidir el nombre añadir nota
+                                    //            //Comentario de la orden	ui-tinymce-6	comentario_de_la_orden
+                                    //            commentario_box.Click();
+                                    //            commentario_box.Clear();
+                                    //            commentario_box.SendKeys(comentario_de_la_orden);
+                                    //            System.Threading.Thread.Sleep(800);
+                                    //        }
+                                    //        catch (Exception)
+                                    //        {
+                                    //            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "****Error al añadir el comentario.");
+                                    //            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "***No se pudo añadir el comentario.");
+                                    //        }
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Comentario textbox no hallado.");
+                                    //    }
+                                    //}
                                 }
                                 #endregion
 
