@@ -2367,9 +2367,9 @@ namespace bot_minsa.Classes
                 Send_Email_Log();
             }
 
-            driver.Close();
+            //driver.Close();
 
-
+            driver.Quit();
             #endregion
 
 
