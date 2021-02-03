@@ -320,6 +320,7 @@ namespace bot_minsa.Classes
                             string distrito_completo = oRow["distrito_completo"].ToString();
                             string corregimiento = oRow["corregimiento"].ToString();
                             string corregimiento_completo = oRow["corregimiento_completo"].ToString();
+                            string corregimiento_numero = oRow["corregimiento_numero"].ToString();
                             string direccion = oRow["direccion"].ToString().Trim();
                             //string persona_contacto = oRow["persona_contacto"].ToString();
                             //string telefono_contacto = oRow["telefono_contacto"].ToString();
@@ -929,9 +930,13 @@ namespace bot_minsa.Classes
                                 if (!String.IsNullOrEmpty(corregimiento_aux) && !String.IsNullOrEmpty(distrito_aux) && !String.IsNullOrEmpty(region_aux))
                                 {
 
-                                    if (corregimiento_completo == corregimiento_aux)
+                                    //if (corregimiento_completo == corregimiento_aux)
+                                    if (corregimiento_aux.Contains(corregimiento_completo))
                                     {
-                                        no_tocar_demograficos = true;
+                                        if (region_completo != "14. C. NGOBE BUGLE")
+                                        {
+                                            no_tocar_demograficos = true;
+                                        }
                                     }
                                     else
                                     {
@@ -953,11 +958,12 @@ namespace bot_minsa.Classes
                                 }
 
                                 //Dirección	demo_-112	direccion
-                                string direccion_aux = GetElementValueById("demo_-112").Trim();
+                                string direccion_aux = GetElementValueById("demo_-112").Trim().ToUpper();
                                 direccion_aux = Truncate(direccion_aux, 99);
                                 if (!String.IsNullOrEmpty(direccion_aux))
                                 {
-                                    if (direccion_aux == direccion)
+                                    //if (direccion_aux == direccion)
+                                    if (direccion_aux.Contains(direccion))
                                     {
                                         no_tocar_direcion = true;
                                     }
@@ -997,7 +1003,8 @@ namespace bot_minsa.Classes
                                 string telefono_aux = GetElementValueById("demo_-111").Trim();
                                 if (!String.IsNullOrEmpty(telefono_aux))
                                 {
-                                    if (telefono_aux == telefono || String.IsNullOrEmpty(telefono))
+                                    //if (telefono_aux == telefono || String.IsNullOrEmpty(telefono))
+                                    if (telefono_aux.Contains(telefono) || String.IsNullOrEmpty(telefono))
                                     {
                                         no_tocar_telefono = true;
                                     }
@@ -1024,15 +1031,15 @@ namespace bot_minsa.Classes
                                 }
 
                                 //Correo	demo_-106	correo
-                                string correo_aux = GetElementValueById("demo_-106");
+                                string correo_aux = GetElementValueById("demo_-106").ToUpper();
                                 string[] correo_values = correo.Trim().Split(',');
                                 string primer_correo = correo_values[0];
 
                                 if (!String.IsNullOrEmpty(correo_aux))
                                 {
 
-
-                                    if (correo_aux.ToUpper() == primer_correo.ToUpper())
+                                    //if (correo_aux.ToUpper() == primer_correo.ToUpper())
+                                    if (correo_aux.Contains(primer_correo.ToUpper()))
                                     {
                                         no_tocar_correo = true;
                                     }
@@ -1196,6 +1203,7 @@ namespace bot_minsa.Classes
                                         //Fecha nacimiento *	demo_-105	fecha_nacimiento
                                         driver.FindElement(By.Id("demo_-105")).Click();
                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                        System.Threading.Thread.Sleep(300);
                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
                                         System.Threading.Thread.Sleep(300);
                                         driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
@@ -1437,7 +1445,7 @@ namespace bot_minsa.Classes
                                     driver.FindElement(By.Id("demo_3_value")).Clear();
                                     driver.FindElement(By.Id("demo_3_value")).Click();
                                     driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
-                                    System.Threading.Thread.Sleep(1200);
+                                    System.Threading.Thread.Sleep(1300);
                                     driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
                                     System.Threading.Thread.Sleep(200);
 
@@ -1479,7 +1487,7 @@ namespace bot_minsa.Classes
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de corregimiento.");
                                                     driver.FindElement(By.Id("demo_3_value")).Clear();
                                                     driver.FindElement(By.Id("demo_3_value")).Click();
-                                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento);
+                                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento_numero + "." );
                                                     System.Threading.Thread.Sleep(i * 1500);
                                                     driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
                                                     System.Threading.Thread.Sleep(200);
@@ -1589,6 +1597,73 @@ namespace bot_minsa.Classes
                                 System.Threading.Thread.Sleep(300);
                                 driver.FindElement(By.Id("demo_18")).SendKeys(fecha_sintomas);
                                 System.Threading.Thread.Sleep(300);
+
+                                //******************
+
+                                bool fecha_de_sintomas_valido = false;
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificar fecha_sintomas.");
+                                for (int i = 1; i <= 3; i++)
+                                {
+                                    //REGIÓN *	demo_1_value	region
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
+                                    System.Threading.Thread.Sleep(i * 500);
+
+                                    //***********************************************************
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si está correcta la fecha_de_sintomas");
+                                    IWebElement fecha_de_sintomas_val = null;
+                                    bool existe_fecha_de_sintomas = TryFindElement(By.Id("demo_18"), out fecha_de_sintomas_val);
+                                    if (existe_fecha_de_sintomas)
+                                    {
+                                        try
+                                        {
+
+                                            DateTime Temp;
+                                            string fecha_de_sintomas_val_value = fecha_de_sintomas_val.GetAttribute("value");
+                                            if (DateTime.TryParse(fecha_de_sintomas_val_value, out Temp) == true)
+                                            {
+                                                fecha_de_sintomas_valido = true;
+                                            }
+                                            else
+                                            {
+                                                fecha_de_sintomas_valido = false;
+                                            }
+                                            if (fecha_de_sintomas_valido)
+                                            {
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_de_toma correcta.");
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en formato de fecha_sintomas.");
+                                                driver.FindElement(By.Id("demo_18")).Click();
+                                                driver.FindElement(By.Id("demo_18")).SendKeys(Keys.ArrowLeft);
+                                                System.Threading.Thread.Sleep(200);
+                                                driver.FindElement(By.Id("demo_18")).SendKeys(Keys.ArrowLeft);
+                                                System.Threading.Thread.Sleep(200);
+                                                driver.FindElement(By.Id("demo_18")).SendKeys(fecha_sintomas);
+                                                System.Threading.Thread.Sleep(300);
+                                            }
+
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
+
+                                    }
+                                }
+
+                                if (!fecha_de_sintomas_valido)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "fecha_de_sintomas con formato inválido, requiere REGISTRO MANUAL.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                    update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                    recargar_pagina = true;
+                                    continue;
+                                }
+
+                                ///  FIN    FECHA DE SINTOMAS
+                                //***********************************************************
 
                                 /////////    FECHA_DE_TOMA
                                 ///
