@@ -632,6 +632,33 @@ namespace bot_minsa.Classes
 
                                 }
 
+                                //validar si boton guardar se activó
+                                //validar si el boton de guardar esta disponible
+
+                                //intertar click en boton deshacer
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Buscar si está activo el botón 'guardar'");
+                                IWebElement button_guardar_verificacion1 = null;
+                                next_foreach = false;
+                                if (TryFindElement(By.XPath("//*[@ng-click='vm.eventSave()']"), out button_guardar_verificacion1))
+                                {
+                                    if (button_guardar_verificacion1.Displayed && button_guardar_verificacion1.Enabled)
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Botón guardar activo. ");
+                                    }
+                                    else { 
+                                        next_foreach = true; }
+
+                                }
+                                if (next_foreach)
+                                {
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Botón 'Guardar' NO está inactivo.");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "***Se pasa al siguiente registro. (añandir intento");
+                                    update_labcore_try(l_id); //se añade un intento
+                                    recargar_pagina = true;
+                                    continue;
+                                }
+
+
                                 IWebElement formato_invalido_label = null;
                                 bool formato_invalido = TryFindElement(By.XPath("//*[contains(., 'Formato no válido')]"), out formato_invalido_label);
                                 if (formato_invalido)
@@ -1487,7 +1514,7 @@ namespace bot_minsa.Classes
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en seleccion de corregimiento.");
                                                     driver.FindElement(By.Id("demo_3_value")).Clear();
                                                     driver.FindElement(By.Id("demo_3_value")).Click();
-                                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento_numero + "." );
+                                                    driver.FindElement(By.Id("demo_3_value")).SendKeys(corregimiento_numero + ".");
                                                     System.Threading.Thread.Sleep(i * 1500);
                                                     driver.FindElement(By.Id("demo_3_value")).SendKeys(Keys.Enter);
                                                     System.Threading.Thread.Sleep(200);
@@ -2202,6 +2229,8 @@ namespace bot_minsa.Classes
                                 #endregion
 
                                 #region grabar_datos
+
+                              
 
                                 //grabar registro con ALT + S
                                 var button_guardar = driver.FindElement(By.XPath("//*[@ng-click='vm.eventSave()']"));
