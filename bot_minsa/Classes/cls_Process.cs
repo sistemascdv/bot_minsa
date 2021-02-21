@@ -181,7 +181,7 @@ namespace bot_minsa.Classes
 
 
                         pagina_cargada = false;
-                        for (int i = 1; i <= 12; i++)
+                        for (int i = 1; i <= 5; i++)
                         {
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
                             try
@@ -209,7 +209,11 @@ namespace bot_minsa.Classes
                         }
                         if (!pagina_cargada)
                         {
-                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de 5 intentos no se pudo cargar la página : http://190.34.154.91:7050/");
+                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de varios intentos no se pudo cargar la página : http://190.34.154.91:7050/");
+                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El programa se cerrará.");
+
+                            driver.Quit();
+                            System.Environment.Exit(0);
                             return;
                         }
 
@@ -645,8 +649,10 @@ namespace bot_minsa.Classes
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Botón guardar activo. ");
                                     }
-                                    else { 
-                                        next_foreach = true; }
+                                    else
+                                    {
+                                        next_foreach = true;
+                                    }
 
                                 }
                                 if (next_foreach)
@@ -2230,7 +2236,7 @@ namespace bot_minsa.Classes
 
                                 #region grabar_datos
 
-                              
+
 
                                 //grabar registro con ALT + S
                                 var button_guardar = driver.FindElement(By.XPath("//*[@ng-click='vm.eventSave()']"));
