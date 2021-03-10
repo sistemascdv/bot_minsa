@@ -137,6 +137,8 @@ namespace bot_minsa.Classes
             bool pagina_cargada = false;
             bool existe_elemento = false;
             log_clear();
+            string minsa_pagina = ConfigurationManager.AppSettings["minsa_pagina"].ToString();
+            string minsa_pagina_ordenes = ConfigurationManager.AppSettings["minsa_pagina_ordenes"].ToString();
 
             try
             {
@@ -189,7 +191,8 @@ namespace bot_minsa.Classes
                                 if (i == 1)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Conectando a http://190.34.154.91:7050/");
-                                    driver.Navigate().GoToUrl("http://190.34.154.91:7050/");
+                                    
+                                    driver.Navigate().GoToUrl(minsa_pagina);
                                 }
                             }
                             catch (Exception)
@@ -259,10 +262,10 @@ namespace bot_minsa.Classes
                                     //}
                                     if (i == 4)
                                     {
-                                        driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
+                                        driver.Navigate().GoToUrl(minsa_pagina_ordenes);
                                     }
 
-                                    driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
+                                    driver.Navigate().GoToUrl(minsa_pagina_ordenes);
                                     int i_aux = i <= 10 ? i : 10;
                                     System.Threading.Thread.Sleep(10000 + 4 * i_aux * 1000);
                                     //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
