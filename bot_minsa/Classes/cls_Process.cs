@@ -20,6 +20,7 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.Events;
+using OpenQA.Selenium.Chrome;
 //using OpenQA.Selenium.Support.PageObjects;
 
 namespace bot_minsa.Classes
@@ -46,7 +47,9 @@ namespace bot_minsa.Classes
         string cnnLABCORE = ConfigurationManager.ConnectionStrings["labcore"].ConnectionString;
         //FirefoxDriver driver = new FirefoxDriver();
 
-        public static IWebDriver driver = new FirefoxDriver();
+        //public static IWebDriver driver = new FirefoxDriver();
+
+        public static IWebDriver driver = new ChromeDriver();
 
         //// Wrapping parent driver             
         //EventFiringWebDriver eventFiringWebDriver = new EventFiringWebDriver(driver);
@@ -190,18 +193,18 @@ namespace bot_minsa.Classes
                             {
                                 if (i == 1)
                                 {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Conectando a http://190.34.154.91:7050/");
-                                    
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Conectando a https://enterprise.minsa.gob.pa:7050/");
+
                                     driver.Navigate().GoToUrl(minsa_pagina);
                                 }
                             }
                             catch (Exception)
                             {
-                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Página http://190.34.154.91:7050/ no responde.");
+                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Página https://enterprise.minsa.gob.pa:7050/ no responde.");
                                 //throw;
                             }
 
-                            System.Threading.Thread.Sleep(30000 + i * i * 1000);
+                            System.Threading.Thread.Sleep(12000 + i * i * 1000);
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si la página cargó correctamente.");
                             if (driver.FindElements(By.Id("username")).Count() > 0)
                             {
@@ -212,7 +215,7 @@ namespace bot_minsa.Classes
                         }
                         if (!pagina_cargada)
                         {
-                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de varios intentos no se pudo cargar la página : http://190.34.154.91:7050/");
+                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de varios intentos no se pudo cargar la página : https://enterprise.minsa.gob.pa:7050/");
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "El programa se cerrará.");
 
                             driver.Quit();
@@ -252,7 +255,7 @@ namespace bot_minsa.Classes
                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Accediendo al formulario");
                                 recargar_pagina = false;
                                 pagina_cargada = false;
-                                //driver.Navigate().GoToUrl("http://190.34.154.91:7050/orderentry");
+                                //driver.Navigate().GoToUrl("https://enterprise.minsa.gob.pa:7050/orderentry");
                                 for (int i = 1; i <= 10; i++)
                                 {
                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "intento: " + i.ToString());
@@ -278,7 +281,7 @@ namespace bot_minsa.Classes
                                 }
                                 if (!pagina_cargada)
                                 {
-                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de varios intentos no se pudo cargar la página de registro: http://190.34.154.91:7050/orderentry");
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Después de varios intentos no se pudo cargar la página de registro: https://enterprise.minsa.gob.pa:7050/orderentry");
                                     error_global = true;
                                     break;
                                 }
@@ -751,12 +754,51 @@ namespace bot_minsa.Classes
                                             if ((primer_apellido_verificacion.Displayed && primer_apellido_verificacion.Enabled))//paciente NO existe
                                             {
                                                 value = "";
-                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente no existe.");
+                                                //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente no existe.");
                                                 Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Campo 'Primer Apellido', leído con éxito.");
+
+                                                //evauar nombre 1
+                                                Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si primer nombre de labcore es diferente de primer nombre de minsa.");
+                                                //Primer nombre *	demo_-103	primer_nombre
+                                                string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().ToUpper().Split(' ');
+                                                string primer_nombre_minsa = primer_nombre_values[0].ToString();
+
+                                                string[] primer_nombre_labcore_values = primer_nombre.Trim().ToUpper().Split(' ');
+                                                string primer_nombre_labcore = primer_nombre_labcore_values[0];
+
+                                                if ( !string.IsNullOrEmpty (primer_nombre_minsa))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente existe pero se pueden editar sus datos.");
+                                                    if ((primer_nombre_labcore != primer_nombre_minsa))
+                                                    {
+                                                        //comentario_de_la_orden = "PACIENTE: " + primer_nombre + " " + primer_apellido + "." + Keys.Enter;
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Primer nombre del MINSA es diferente al primer nombre de LABCORE.");
+                                                        if (resultado_valor == "1")
+                                                        {
+                                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Resultado positivo, con nombres diferentes. Se coloca para reporte manual.");
+                                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                                            update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                                            recargar_pagina = true;
+                                                            continue;
+
+                                                        }
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente no existe.");
+                                                }
+
+
+
+
                                                 break;
                                             }
                                             else
                                             {
+
+
                                                 next_foreach = true;
                                             }
                                         }
@@ -787,16 +829,30 @@ namespace bot_minsa.Classes
                                     string comentario_de_la_orden = "";
                                     paciente_existe = true;
 
-                                    ////evauar nombre 1
-                                    //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si primer nombre de labcore es diferente de primer nombre de minsa.");
-                                    ////Primer nombre *	demo_-103	primer_nombre
-                                    //string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().Split(' ');
-                                    //string primer_nombre_minsa = primer_nombre_values[0];
+                                    //evauar nombre 1
+                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si primer nombre de labcore es diferente de primer nombre de minsa.");
+                                    //Primer nombre *	demo_-103	primer_nombre
+                                    string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().ToUpper().Split(' ');
+                                    string primer_nombre_minsa = primer_nombre_values[0];
 
-                                    //if (primer_nombre != primer_nombre_minsa)
-                                    //{
-                                    //    comentario_de_la_orden = "PACIENTE: " + primer_nombre + " " + primer_apellido + "." + Keys.Enter;
-                                    //}
+                                    string[] primer_nombre_labcore_values = primer_nombre.Trim().ToUpper().Split(' ');
+                                    string primer_nombre_labcore = primer_nombre_labcore_values[0];
+
+                                    if (primer_nombre_labcore != primer_nombre_minsa)
+                                    {
+                                        //comentario_de_la_orden = "PACIENTE: " + primer_nombre + " " + primer_apellido + "." + Keys.Enter;
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Primer nombre del MINSA es diferente al primer nombre de LABCORE.");
+                                        if (resultado_valor == "1")
+                                        {
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Resultado positivo, con nombres diferentes. Se coloca para reporte manual.");
+                                            Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application_Error, "Se pasa al siguiente registro.");
+                                            update_labcore_order(l_id, "3"); //esta orden pasa a reporte manual
+                                            recargar_pagina = true;
+                                            continue;
+
+                                        }
+
+                                    }
 
                                     ////Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Validar si fecha nacimiento de labcore es diferente de fecha nacimiento de minsa.");
                                     //////evaluar fecha nacimiento
