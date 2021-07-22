@@ -1298,6 +1298,8 @@ namespace bot_minsa.Classes
                                         System.Threading.Thread.Sleep(300);
                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
                                         System.Threading.Thread.Sleep(300);
+                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                        System.Threading.Thread.Sleep(300);
                                         driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
                                         //System.Threading.Thread.Sleep(300);
 
@@ -1343,6 +1345,8 @@ namespace bot_minsa.Classes
                                                     {
                                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en formato de fecha de nacimiento.");
                                                         driver.FindElement(By.Id("demo_-105")).Click();
+                                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                                        System.Threading.Thread.Sleep(300);
                                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
                                                         System.Threading.Thread.Sleep(300);
                                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
