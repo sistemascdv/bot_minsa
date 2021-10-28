@@ -1,0 +1,13 @@
+[App Msg] 2021-07-13 09:21:49 --- 
+[App Msg] 2021-07-13 09:21:49 --- *********************************************
+[App Msg] 2021-07-13 09:21:49 --- Inciando proceso de reporte de pruebas al MINSA
+[App Msg] 2021-07-13 09:21:49 --- Obtener datos de las pruebas a reportar (sp en labcore).
+[App Msg] 2021-07-13 09:21:51 --- Ejecución exitosa. Cantidad de registros encontrados: [628].
+[App Msg] 2021-07-13 09:21:51 --- Conectando a MINSA.
+[App Msg] 2021-07-13 09:21:51 --- intento: 1
+[App Msg] 2021-07-13 09:21:51 --- Conectando a http://190.34.154.91:7050/
+[App Msg] 2021-07-13 09:21:52 --- Página http://190.34.154.91:7050/ no responde.
+[App Msg] 2021-07-13 09:22:23 --- Verificando si la página cargó correctamente.
+[App Msg] 2021-07-13 09:22:23 --- intento: 2
+[App Msg] 2021-07-13 09:22:57 --- Verificando si la página cargó correctamente.
+[App Msg] 2021-07-13 09:22:57 --- Página cargó correctamente.

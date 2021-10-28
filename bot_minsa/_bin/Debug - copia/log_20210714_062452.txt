@@ -1,0 +1,74 @@
+[App Msg] 2021-07-14 14:48:06 --- 
+[App Msg] 2021-07-14 14:48:06 --- *********************************************
+[App Msg] 2021-07-14 14:48:06 --- Inciando proceso de reporte de pruebas al MINSA
+[App Msg] 2021-07-14 14:48:06 --- Obtener datos de las pruebas a reportar (sp en labcore).
+[App Msg] 2021-07-14 14:48:09 --- Ejecución exitosa. Cantidad de registros encontrados: [1539].
+[App Msg] 2021-07-14 14:48:09 --- Conectando a MINSA.
+[App Msg] 2021-07-14 14:48:09 --- intento: 1
+[App Msg] 2021-07-14 14:48:09 --- Conectando a https://enterprise.minsa.gob.pa:7050/
+[App Msg] 2021-07-14 14:48:46 --- Verificando si la página cargó correctamente.
+[App Msg] 2021-07-14 14:48:46 --- Página cargó correctamente.
+[App Msg] 2021-07-14 14:49:04 --- Se procede a recorrer cada registro para reportarlo a MINSA. 
+[App Msg] 2021-07-14 14:49:04 --- 
+[App Msg] 2021-07-14 14:49:04 --- Nueva orden. Contador de registros: 1
+[App Msg] 2021-07-14 14:49:04 --- Accediendo al formulario
+[App Msg] 2021-07-14 14:49:04 --- intento: 1
+[App Msg] 2021-07-14 14:49:19 --- l_id: [603485], Cód. estudio: [LCL-I-1208], Orden: [2107140382-LCL-I-1208]
+[App Msg] 2021-07-14 14:49:19 --- Cédula: [8-778-1682], Nombre: [STEPHANY], Apellido: [SANTIAGO SELLES]
+[App Msg] 2021-07-14 14:49:19 --- Validación de datos. 
+[App Msg] 2021-07-14 14:49:19 --- Numero de orden: 2107140382-LCL-I-1208
+[App Msg] 2021-07-14 14:49:19 --- Buscar si está activo el botón 'deshacer'
+[App Msg] 2021-07-14 14:49:19 --- Buscando boton 'Nuevo'. 
+[App Msg] 2021-07-14 14:49:19 --- intento: 1
+[App Msg] 2021-07-14 14:49:21 --- Click en 'Nuevo'.
+[App Msg] 2021-07-14 14:49:21 --- Buscando campo 'tipo de documento'. 
+[App Msg] 2021-07-14 14:49:21 --- intento: 1
+[App Msg] 2021-07-14 14:49:23 --- Click en 'tipo de documento'.
+[App Msg] 2021-07-14 14:49:23 --- Click en cedula.
+[App Msg] 2021-07-14 14:49:23 --- Validar si los elemntos de la página cargaron (con click en region).
+[App Msg] 2021-07-14 14:49:23 --- intento: 1
+[App Msg] 2021-07-14 14:49:25 --- Validar formato de cédula es válido
+[App Msg] 2021-07-14 14:49:27 --- Buscar si está activo el botón 'guardar'
+[App Msg] 2021-07-14 14:49:27 --- Botón guardar activo. 
+[App Msg] 2021-07-14 14:49:27 --- Validar si existe el paciente.
+[App Msg] 2021-07-14 14:49:27 --- Verificar si campo 'Primer Apellido' esta disponible. 
+[App Msg] 2021-07-14 14:49:27 --- intento: 1
+[App Msg] 2021-07-14 14:49:28 --- Campo 'Primer Apellido', leído con éxito.
+[App Msg] 2021-07-14 14:49:28 --- Paciente existe.
+[App Msg] 2021-07-14 14:49:28 --- Paciente existente.
+[App Msg] 2021-07-14 14:49:28 --- Validar si primer nombre de labcore es diferente de primer nombre de minsa.
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_-104_value
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_-105
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_3_value
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_2_value
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_1_value
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_-112
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_-111
+[App Msg] 2021-07-14 14:49:32 --- obtener valor del elemento (By.Id): demo_-106
+[App Msg] 2021-07-14 14:49:32 --- Click en numero_interno.
+[App Msg] 2021-07-14 14:49:34 --- Click en fecha_sintomas.
+[App Msg] 2021-07-14 14:49:35 --- Verificar fecha_sintomas.
+[App Msg] 2021-07-14 14:49:35 --- intento: 1
+[App Msg] 2021-07-14 14:49:36 --- Validar si está correcta la fecha_de_sintomas
+[App Msg] 2021-07-14 14:49:36 --- fecha_de_toma correcta.
+[App Msg] 2021-07-14 14:49:36 --- Click en fecha_de_toma.
+[App Msg] 2021-07-14 14:49:37 --- Verificar fecha_de_toma.
+[App Msg] 2021-07-14 14:49:37 --- intento: 1
+[App Msg] 2021-07-14 14:49:37 --- Validar si está correcta la fecha_de_toma
+[App Msg] 2021-07-14 14:49:37 --- fecha_de_toma correcta.
+[App Msg] 2021-07-14 14:49:37 --- Click en tipo_de_prueba.
+[App Msg] 2021-07-14 14:49:39 --- Verificar tipo_de_prueba.
+[App Msg] 2021-07-14 14:49:39 --- intento: 1
+[App Msg] 2021-07-14 14:49:39 --- Validar si está correcta el tipo_de_prueba
+[App Msg] 2021-07-14 14:49:39 --- tipo_de_prueba correcto.
+[App Msg] 2021-07-14 14:49:39 --- Click en resultado_minsa.
+[App Msg] 2021-07-14 14:49:41 --- Verificar resultado_minsa.
+[App Msg] 2021-07-14 14:49:41 --- intento: 1
+[App Msg] 2021-07-14 14:49:41 --- Validar si está correcta el resultado_minsa
+[App Msg] 2021-07-14 14:49:41 --- resultado_minsa correcto.
+[App Msg] 2021-07-14 14:49:41 --- Click en fecha_resultado.
+[App Msg] 2021-07-14 14:49:42 --- Verificar fecha_resultado.
+[App Msg] 2021-07-14 14:49:42 --- intento: 1
+[App Msg] 2021-07-14 14:49:43 --- Validar si está correcta la fecha_resultado
+[App Msg] 2021-07-14 14:49:43 --- fecha_resultado correcta.
+[App Msg] 2021-07-14 14:49:43 --- Click en guardar. 
