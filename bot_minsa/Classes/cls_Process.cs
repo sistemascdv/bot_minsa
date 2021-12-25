@@ -204,7 +204,7 @@ namespace bot_minsa.Classes
                                 //throw;
                             }
 
-                            System.Threading.Thread.Sleep(12000 + i * i * 1000);
+                            System.Threading.Thread.Sleep(18000 + i * i * 1000);
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si la página cargó correctamente.");
                             if (driver.FindElements(By.Id("username")).Count() > 0)
                             {
@@ -235,7 +235,7 @@ namespace bot_minsa.Classes
                         driver.FindElement(By.Id("password")).Click();
                         driver.FindElement(By.Id("password")).SendKeys(Keys.Enter);
                         System.Threading.Thread.Sleep(1000);
-
+                        System.Threading.Thread.Sleep(12000);
 
                         //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
@@ -2336,7 +2336,7 @@ namespace bot_minsa.Classes
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
                                         //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
 
-                                        for (int i = 1; i <= 6; i++)
+                                        for (int i = 1; i <= 7; i++)
                                         {
 
                                             //validar si aparece el boton de seguro si desea guardar?
