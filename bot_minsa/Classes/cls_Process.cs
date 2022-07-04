@@ -762,7 +762,7 @@ namespace bot_minsa.Classes
                                                 //Primer nombre *	demo_-103	primer_nombre
                                                 string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().ToUpper().Split(' ');
                                                 string primer_nombre_minsa = primer_nombre_values[0].ToString();
-
+                                                primer_nombre_minsa = primer_nombre_minsa.ToUpper().Replace('Á', 'A').Replace('É', 'E').Replace('Í', 'I').Replace('Ó', 'O').Replace('Ú', 'U');
                                                 string[] primer_nombre_labcore_values = primer_nombre.Trim().ToUpper().Split(' ');
                                                 string primer_nombre_labcore = primer_nombre_labcore_values[0];
 
@@ -834,6 +834,7 @@ namespace bot_minsa.Classes
                                     //Primer nombre *	demo_-103	primer_nombre
                                     string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().ToUpper().Split(' ');
                                     string primer_nombre_minsa = primer_nombre_values[0];
+                                    primer_nombre_minsa = primer_nombre_minsa.ToUpper().Replace('Á', 'A').Replace('É', 'E').Replace('Í', 'I').Replace('Ó', 'O').Replace('Ú', 'U');
 
                                     string[] primer_nombre_labcore_values = primer_nombre.Trim().ToUpper().Split(' ');
                                     string primer_nombre_labcore = primer_nombre_labcore_values[0];
@@ -2314,6 +2315,13 @@ namespace bot_minsa.Classes
                                     //buscar si es repetida
                                     System.Threading.Thread.Sleep(1200);
                                     IWebElement div_repetido = null;
+                                    if (TryFindElement(By.XPath("//div[contains(text(), 'ya existe en la base de datos')]"), out div_repetido))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
+                                        error_al_guardar = false;
+                                        repetido_guardado = true;
+                                        goto RegistroRepetido;
+                                    }
                                     if (TryFindElement(By.XPath("//div[contains(text(), 'El externalid ya existe en la base de datos')]"), out div_repetido))
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
@@ -2322,6 +2330,13 @@ namespace bot_minsa.Classes
                                         goto RegistroRepetido;
                                     }
                                     if (TryFindElement(By.XPath("//div[contains(text(), 'El número interno ya existe en la base de datos')]"), out div_repetido))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
+                                        error_al_guardar = false;
+                                        repetido_guardado = true;
+                                        goto RegistroRepetido;
+                                    }
+                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El código interno ya existe en la base de datos')]"), out div_repetido))
                                     {
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
                                         error_al_guardar = false;
@@ -2415,6 +2430,13 @@ namespace bot_minsa.Classes
                                                 //buscar si es repetida
                                                 System.Threading.Thread.Sleep(500 * i);
                                                 div_repetido = null;
+                                                if (TryFindElement(By.XPath("//div[contains(text(), 'ya existe en la base de datos')]"), out div_repetido))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                    error_al_guardar = false;
+                                                    repetido_guardado = true;
+                                                    goto RegistroRepetido;
+                                                }
                                                 if (TryFindElement(By.XPath("//div[contains(text(), 'El externalId ya existe en la base de datos')]"), out div_repetido))
                                                 {
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
@@ -2423,6 +2445,13 @@ namespace bot_minsa.Classes
                                                     goto RegistroRepetido;
                                                 }
                                                 if (TryFindElement(By.XPath("//div[contains(text(), 'El número interno ya existe en la base de datos')]"), out div_repetido))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                    error_al_guardar = false;
+                                                    repetido_guardado = true;
+                                                    goto RegistroRepetido;
+                                                }
+                                                if (TryFindElement(By.XPath("//div[contains(text(), 'El código interno ya existe en la base de datos')]"), out div_repetido))
                                                 {
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
                                                     error_al_guardar = false;
