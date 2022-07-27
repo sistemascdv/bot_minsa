@@ -204,7 +204,7 @@ namespace bot_minsa.Classes
                                 //throw;
                             }
 
-                            System.Threading.Thread.Sleep(12000 + i * i * 1000);
+                            System.Threading.Thread.Sleep(18000 + i * i * 1000);
                             Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si la página cargó correctamente.");
                             if (driver.FindElements(By.Id("username")).Count() > 0)
                             {
@@ -235,7 +235,7 @@ namespace bot_minsa.Classes
                         driver.FindElement(By.Id("password")).Click();
                         driver.FindElement(By.Id("password")).SendKeys(Keys.Enter);
                         System.Threading.Thread.Sleep(1000);
-
+                        System.Threading.Thread.Sleep(12000);
 
                         //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 
@@ -762,11 +762,11 @@ namespace bot_minsa.Classes
                                                 //Primer nombre *	demo_-103	primer_nombre
                                                 string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().ToUpper().Split(' ');
                                                 string primer_nombre_minsa = primer_nombre_values[0].ToString();
-
+                                                primer_nombre_minsa = primer_nombre_minsa.ToUpper().Replace('Á', 'A').Replace('É', 'E').Replace('Í', 'I').Replace('Ó', 'O').Replace('Ú', 'U');
                                                 string[] primer_nombre_labcore_values = primer_nombre.Trim().ToUpper().Split(' ');
                                                 string primer_nombre_labcore = primer_nombre_labcore_values[0];
 
-                                                if ( !string.IsNullOrEmpty (primer_nombre_minsa))
+                                                if (!string.IsNullOrEmpty(primer_nombre_minsa))
                                                 {
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Paciente existe pero se pueden editar sus datos.");
                                                     if ((primer_nombre_labcore != primer_nombre_minsa))
@@ -834,6 +834,7 @@ namespace bot_minsa.Classes
                                     //Primer nombre *	demo_-103	primer_nombre
                                     string[] primer_nombre_values = driver.FindElement(By.Id("demo_-103")).GetAttribute("value").Trim().ToUpper().Split(' ');
                                     string primer_nombre_minsa = primer_nombre_values[0];
+                                    primer_nombre_minsa = primer_nombre_minsa.ToUpper().Replace('Á', 'A').Replace('É', 'E').Replace('Í', 'I').Replace('Ó', 'O').Replace('Ú', 'U');
 
                                     string[] primer_nombre_labcore_values = primer_nombre.Trim().ToUpper().Split(' ');
                                     string primer_nombre_labcore = primer_nombre_labcore_values[0];
@@ -1298,6 +1299,8 @@ namespace bot_minsa.Classes
                                         System.Threading.Thread.Sleep(300);
                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
                                         System.Threading.Thread.Sleep(300);
+                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                        System.Threading.Thread.Sleep(300);
                                         driver.FindElement(By.Id("demo_-105")).SendKeys(fecha_nacimiento);
                                         //System.Threading.Thread.Sleep(300);
 
@@ -1343,6 +1346,8 @@ namespace bot_minsa.Classes
                                                     {
                                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Error en formato de fecha de nacimiento.");
                                                         driver.FindElement(By.Id("demo_-105")).Click();
+                                                        driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
+                                                        System.Threading.Thread.Sleep(300);
                                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
                                                         System.Threading.Thread.Sleep(300);
                                                         driver.FindElement(By.Id("demo_-105")).SendKeys(Keys.ArrowLeft);
@@ -2310,13 +2315,35 @@ namespace bot_minsa.Classes
                                     //buscar si es repetida
                                     System.Threading.Thread.Sleep(1200);
                                     IWebElement div_repetido = null;
-                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El número interno ya existe en la base de datos')]"), out div_repetido))
+                                    if (TryFindElement(By.XPath("//div[contains(text(), 'ya existe en la base de datos')]"), out div_repetido))
                                     {
-                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
                                         error_al_guardar = false;
                                         repetido_guardado = true;
                                         goto RegistroRepetido;
                                     }
+                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El externalid ya existe en la base de datos')]"), out div_repetido))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
+                                        error_al_guardar = false;
+                                        repetido_guardado = true;
+                                        goto RegistroRepetido;
+                                    }
+                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El número interno ya existe en la base de datos')]"), out div_repetido))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
+                                        error_al_guardar = false;
+                                        repetido_guardado = true;
+                                        goto RegistroRepetido;
+                                    }
+                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El código interno ya existe en la base de datos')]"), out div_repetido))
+                                    {
+                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
+                                        error_al_guardar = false;
+                                        repetido_guardado = true;
+                                        goto RegistroRepetido;
+                                    }
+
 
                                     if (!repetido_guardado)
                                     {
@@ -2324,7 +2351,7 @@ namespace bot_minsa.Classes
                                         Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si al guardar, el formulario respondió correctamente.");
                                         //Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "Verificando si boton 'Nuevo' esta desactivado y boton guardar está activo. ");
 
-                                        for (int i = 1; i <= 6; i++)
+                                        for (int i = 1; i <= 7; i++)
                                         {
 
                                             //validar si aparece el boton de seguro si desea guardar?
@@ -2345,9 +2372,17 @@ namespace bot_minsa.Classes
                                                     //buscar si es repetida
                                                     System.Threading.Thread.Sleep(1000);
                                                     div_repetido = null;
+                                                    if (TryFindElement(By.XPath("//div[contains(text(), 'El externalid ya existe en la base de datos')]"), out div_repetido))
+                                                    {
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
+                                                        error_al_guardar = false;
+                                                        repetido_guardado = true;
+                                                        goto RegistroRepetido;
+                                                        //break;
+                                                    }
                                                     if (TryFindElement(By.XPath("//div[contains(text(), 'El número interno ya existe en la base de datos')]"), out div_repetido))
                                                     {
-                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                        Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grabada (repetido)");
                                                         error_al_guardar = false;
                                                         repetido_guardado = true;
                                                         goto RegistroRepetido;
@@ -2395,7 +2430,28 @@ namespace bot_minsa.Classes
                                                 //buscar si es repetida
                                                 System.Threading.Thread.Sleep(500 * i);
                                                 div_repetido = null;
+                                                if (TryFindElement(By.XPath("//div[contains(text(), 'ya existe en la base de datos')]"), out div_repetido))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                    error_al_guardar = false;
+                                                    repetido_guardado = true;
+                                                    goto RegistroRepetido;
+                                                }
+                                                if (TryFindElement(By.XPath("//div[contains(text(), 'El externalId ya existe en la base de datos')]"), out div_repetido))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                    error_al_guardar = false;
+                                                    repetido_guardado = true;
+                                                    goto RegistroRepetido;
+                                                }
                                                 if (TryFindElement(By.XPath("//div[contains(text(), 'El número interno ya existe en la base de datos')]"), out div_repetido))
+                                                {
+                                                    Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
+                                                    error_al_guardar = false;
+                                                    repetido_guardado = true;
+                                                    goto RegistroRepetido;
+                                                }
+                                                if (TryFindElement(By.XPath("//div[contains(text(), 'El código interno ya existe en la base de datos')]"), out div_repetido))
                                                 {
                                                     Cls_Logger.WriteToLog_and_Console(Cls_Logger.MessageType.Application, "orden previamente grbada (repetido)");
                                                     error_al_guardar = false;
